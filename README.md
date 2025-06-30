@@ -1,6 +1,7 @@
 ## Epitome
 <p align="center"><img src="./meida/logo.png" width="200"></p>
 <p align="center">For a better understanding of AI in society</p>
+<p align="center"><a href="./README.md">English</a> | <a href="./README-zh.md">中文</a></p>
 
 [**Epitome**](http://www.epitome-ai.com) is the world's first experimental open platform dedicated to the deep integration of artificial intelligence and social sciences. Through seven major modules, the platform provides intelligent assistance across entire process，ranging from experimental intervention, experimental environment, to experimental participants, helping researchers easily design and conduct complex human-computer interaction experimental scenarios. This enables systematic research on AI's social impact and exploration of comprehensive solutions, advancing the harmonious integration of artificial intelligence into human society.
 

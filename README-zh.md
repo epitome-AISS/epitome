@@ -1,6 +1,7 @@
 ## Epitome
 <p  align="center"><img  src="./meida/logo.png"  width="200"></p>
 <p  align="center">For a better understanding of AI in society</p>
+<p align="center"><a href="./README.md">English</a> | <a href="./README-zh.md">中文</a></p>
 
 
 [**Epitome**](http://www.epitome-ai.com)是全球首个专注于人工智能与社会科学深度融合的实验开放平台。平台通过7大模块，从实验干预--实验环境--实验参与者全流程智能化帮助研究者轻松设计并运行复杂的人机交互实验场景，实现对人工智能社会影响的系统性研究和综合解决方案的探索，推进人工智能更加和谐地融入人类社会。
