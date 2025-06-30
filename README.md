@@ -1,85 +1,85 @@
 ## Epitome
-<p  align="center"><img  src="./meida/logo.png"  width="200"></p>
-<p  align="center">For a better understanding of AI in society</p>
+<p align="center"><img src="./meida/logo.png" width="200"></p>
+<p align="center">For a better understanding of AI in society</p>
 
+[**Epitome**](http://www.epitome-ai.com) is the world's first experimental open platform dedicated to the deep integration of artificial intelligence and social sciences. Through seven major modules, the platform provides intelligent assistance across entire process，ranging from experimental intervention, experimental environment, to experimental participants, helping researchers easily design and conduct complex human-computer interaction experimental scenarios. This enables systematic research on AI's social impact and exploration of comprehensive solutions, advancing the harmonious integration of artificial intelligence into human society.
 
-[**Epitome**](http://lab.epitome-ai.com/#/login)是全球首个专注于人工智能与社会科学深度融合的实验开放平台。平台通过7大模块，从实验干预--实验环境--实验参与者全流程智能化帮助研究者轻松设计并运行复杂的人机交互实验场景，实现对人工智能社会影响的系统性研究和综合解决方案的探索，推进人工智能更加和谐地融入人类社会。
+## Key Features
+### **Innovative Interactive Scenarios, Expanding Research Boundaries**
 
-## 主要特点
-### **创新性交互场景，拓展研究边界**
+**Role-Playing Robots**: Simulate social roles such as judges and historical figures, enabling cross-temporal and cross-identity dialogue experiments that provide standardized and replicable interactive elements for abstract social problem research.
 
-**角色扮演机器人**：模拟法官、历史人物等社会角色，实现跨时空、跨身份的对话实验，为抽象社会问题研究提供标准化且可重复的交互元素。
+**Human-AI Hybrid Chat Rooms**: Support multi-party interaction patterns of "human-human-AI-AI," simulating complex social networks and group interaction contexts, opening new possibilities for group behavior and social dynamics research.
 
-**人智混合聊天室**：支持"人-人-机-机"多元互动模式，模拟复杂的社会网络和群体互动情境，为群体行为和社会动力学研究开创新可能。
+**AI Town**: Through intelligent agents that simulate human economic transactions, social conflicts, and other behaviors, provide large-scale, long-term social scenario simulations, enabling low-cost policy effect prediction and social norm evolution research.
 
-**AI小镇仿真**：通过智能体Agent模拟人类经济交易、社交冲突等行为，提供大规模、长时间跨度的社会情境仿真，实现低成本的政策效果预测和社会规范演化研究。
+### **Complete-Flow Closed-Loop Support, Enhancing Research Efficiency**
 
+**Comprehensive Complete-Flow Solutions**: Integrate experimental management, material management, questionnaire management, and workflow management into one unified system, eliminating the complexity of switching between multiple tools and improving research efficiency.
 
-### **全流程闭环支持，提升研究效率**
+**Modular Workflow Design**: Construct complex research processes through visual linking of modular components, lowering technical barriers, supporting flexible experimental design iteration, and enhancing experimental controllability.
 
-**全流程覆盖的综合解决方案**： 集成实验管理、素材管理、问卷管理和工作流管理于一体，消除多工具切换的复杂性，提升研究效率。
+### **Open Research Design, Enhancing Research Innovation**
 
-**模块化工作流设计**：通过模块化组件的可视化链接，构建复杂研究流程，降低技术门槛，支持灵活的实验设计迭代，增强实验可控性。
+**Diverse Material Support**: Allow uploading of various format materials including text, images, videos, PDFs, and PPTs, with multimodal large models supporting experimental material preparation, expanding the expressive forms of experimental stimuli, enriching experimental content, and improving effective support for diverse and varied experiments.
 
-### **开放性研究设计，增强研究创新**
+**Open Architecture Design**: Workflow and agent systems support customized design, adapting to complex experimental research paradigms across multiple disciplines.
 
-**多样化素材支持**：允许上传文本、图片、视频、PDF和PPT等多种格式素材，多模态大模型支撑实验材料准备，拓展实验刺激材料的表现形式，丰富实验内容，提升对多形式、多样态实验的有效支持度。
+### **Controllable Experimental Advancement, Improving Research Quality**
 
-**开放架构设计**：工作流和Agent系统支持自定义设计，适配多学科复杂实验的科研究范式。
+**Scalable Experimental Scale**: Break through the venue and personnel limitations of traditional offline experiments, with digital platforms effectively expanding experimental scale and providing support for long-term tracking research and cross-cultural comparative experiments.
 
-### **可控性实验推进，提高研究质量**
+**Precise Process Control**: Preset interaction processes that balance the tension between experimental control and realistic simulation, achieving unity between high standardization and naturalness.
 
-**实验规模可拓展**：突破传统线下实验的场地和人员限制，数字化平台能有效拓展实验规模，为长期追踪研究和跨文化对比实验提供支持。
+**Enhanced Reproducibility**: Standardized experimental processes based on AI and workflows significantly improve research reproducibility and verifiability, helping address the "reproducibility crisis" in social sciences.
 
-**精确流程控制**：预设交互流程，平衡实验控制与现实模拟之间的张力，实现高度标准化与自然性的统一。
+## Ongoing Projects
+### 1. Global Assessment of Cross-Cultural Interactive Alignment for Multimodal Large Model Safety Values
+With the rapid development of AI technology and the continuous emergence of multimodal large models, we conduct global assessment of cross-cultural interactive alignment for multimodal large model safety values. Through large-scale testing, we compare the cross-cultural safety value adaptation capabilities of cutting-edge SOTA multimodal models across international populations, analyzing the strengths and weaknesses of each model. This provides key data support and theoretical foundation for global cross-cultural application and optimization of multimodal models, helping promote safer, more precise, and more efficient service to users of different cultural backgrounds worldwide, and fostering adaptive development and ethical safety construction of AI technology globally.
 
-**可重复性强化**：基于AI和工作流的标准化实验过程，显著提高研究的可重复性和可验证性，有助于应对社会科学"可重复性危机"。
+### 2. Global Survey on Public Innovation Expectations and Risk Perceptions of Artificial Intelligence
+At the 2025 French Artificial Intelligence Action Summit, 60 countries and international organizations signed a declaration emphasizing AI accessibility. Under different cultural contexts, global public expectations for AI innovation and risk perceptions vary significantly. Current AI governance systems rely on expert judgment and policy frameworks but lack public opinion as a foundational basis. This experiment aims to launch a global research program under the UN framework, with goals including cross-national surveys, constructing empirical foundations, identifying challenges in underdeveloped regions and proposing strategies, promoting inclusive and fair AI governance models, bridging the gap between expert assessments and public perceptions, and supporting responsible AI development and application.
 
+### 3. Multimodal LLM-Assisted Educational Intervention Experiment for Correcting Antibiotic Misuse in Helicobacter Pylori Treatment Among Primary Care Physicians
+This research focuses on the corrective impact of multimodal LLM-assisted education on antibiotic misuse behavior in Helicobacter pylori treatment among primary care physicians. In over 2,300 community service centers and township health centers in Jiangxi Province, as well as 27,000 village clinics, we introduce LLMs with PPT-based questioning and problem-solving capabilities, aiming to improve primary care physicians' Helicobacter pylori diagnosis and treatment skills, optimize antibiotic use, correct misuse behaviors, and thereby improve primary healthcare service quality and patient treatment outcomes.
 
-## 项目进行中
-### 1. 多模态大模型安全价值跨文化交互对齐全球评测
-在AI技术飞速发展、多模态大模型不断涌现的趋势下，开展多模态大模型安全价值跨文化交互对齐全球评测。通过大规模测试，对比前沿的 SOTA 多模态模型在跨国人群中的跨文化安全价值适配能力，剖析各模型优势与不足，为全球多模态模型的跨文化应用与优化提供关键数据支撑与理论依据，助力推动多模态大模型在全球范围内更安全、更精准、更高效地服务不同文化背景的用户，促进 AI 技术在全球的适配性发展与伦理安全建设。
-### 2. 人工智能公众创新期待与风险感知全球调查
-在2025年法国人工智能行动峰会上，60国与国际组织签署声明强调AI可及性。不同文化背景语境下，全球公众对AI创新期待与风险感知差异大，现有AI治理系统依赖专家判断和政策框架，但缺乏公众意见作为基础性依据。本实验拟在联合国框架下发起全球调研计划，目标包括跨国调研、构建实证基础、识别欠发达地区挑战并提出策略，推动包容公正的AI治理模式，缩小专家评估与公众感知鸿沟，支持AI负责任发展应用。
-### 3. 多模态大模型辅助贯宣对于基层医生幽门螺杆菌抗生素滥用行为纠正干预实验。
-本研究聚焦多模态大模型辅助贯宣对基层医生幽门螺杆菌抗生素滥用行为的纠正影响。在江西2300多家社区服务中心和乡镇卫生院，以及27000家村卫生室，引入具备会根据PPT提问、解惑功能的大模型，旨在提升基层医生的幽门螺杆菌诊疗水平，优化抗生素使用，纠正滥用行为，从而提高基层医疗服务质量和患者治疗效果。
-### 4. 人工智能模型劝服机制、效能与协同增强研究
-AI技术飞速发展，其在信息传播与观点塑造中的劝服潜力日益凸显，引发广泛关注。然而，对其劝服能力的系统性认知，尤其是其独立劝服效能、影响机制，以及辅助人类进行高效劝服的协同作用与边界，仍缺乏深入的实证探索。本研究旨在通过系列实验，全面评估AI的自主劝服效果，并深入探究其作为智能助手在论点优化、反驳应对等方面增强人类沟通说服力的实际增益与内在机理。研究成果将深化AI社会影响的理论认知，揭示AI劝服的潜力与伦理挑战。这不仅为优化人机协作、开发负责任AI应用提供关键实证依据，也为制定相关伦理规范与治理政策提供科学指引，最终促进构建高效、可信的人机共融社会。
-### 5. 合作问题解决能力智能诊断系统
-合作问题解决能力被联合国教科文组织等国际组织确立为“21世纪生活和工作的核心技能”，其主要聚焦多人协同，解决实际问题的能力。在如今AI技术迅速发展，大模型被广泛投入使用的时代，传统的合作问题解决能力评测正迎来升级契机。本实验面向不同年龄段用户，对合作问题解决能力开展智能化测评，旨在探索新时代人机协作背景下更加全面、精准的诊断模式。
-### 6. 思维链演化：人机协作的反馈学习与动态优化实验研究
-本实验聚焦思维链、人类反馈、人机协作与演化。实验中人类对COT思维链进行反馈干预，增强大模型双记忆能力，不断向人类偏好对齐，满足定制化个性化需求。同时，其强记忆能力避免重复犯错，演进能力则能识别用户潜在偏好并深度对齐，探究人机协作中大模型的优化路径与协作效能提升。
+### 4. Research on AI Model Persuasion Mechanisms, Efficacy, and Collaborative Enhancement
+With rapid AI development, its persuasion potential in information dissemination and opinion shaping has become increasingly prominent, generating widespread attention. However, systematic understanding of its persuasion capabilities, especially its independent persuasion efficacy, influence mechanisms, and collaborative effects in assisting human persuasion, still lacks in-depth empirical exploration. This research aims to comprehensively evaluate AI's autonomous persuasion effects through a series of experiments and deeply explore its actual benefits and underlying mechanisms as an intelligent assistant in argument optimization and counterargument responses. The research outcomes will deepen theoretical understanding of AI's social impact and reveal AI persuasion's potential and ethical challenges. This not only provides key empirical evidence for optimizing human-AI collaboration and developing responsible AI applications but also offers scientific guidance for formulating relevant ethical norms and governance policies, ultimately promoting the construction of an efficient and trustworthy human-AI integrated society.
 
-## 研究者说
+### 5. Intelligent Diagnostic System for Collaborative Problem-Solving Abilities
+Collaborative problem-solving ability has been established by international organizations such as UNESCO as a "core skill for 21st-century life and work," primarily focusing on multi-person coordination to solve practical problems. In today's era of rapid AI development and widespread use of large models, traditional collaborative problem-solving ability assessment is facing upgrade opportunities. This experiment targets users of different age groups, conducting intelligent assessment of collaborative problem-solving abilities, aiming to explore more comprehensive and precise diagnostic models in the new era of human-AI collaboration.
 
-### 实验1 医疗AI以患者为中心沟通能力评估
-实验目的：系统性评估人工智能，特别是应用于医疗领域的大模型，在“以患者为中心”（PCC）的沟通能力方面的表现。
+### 6. Evolution of Chain of Thought: Experimental Research on Feedback Learning and Dynamic Optimization in Human-AI Collaboration
+This experiment focuses on chain of thought, human feedback, human-AI collaboration, and evolution. In the experiment, humans provide feedback intervention on COT chain of thought, enhancing large models' dual memory capabilities, continuously aligning with human preferences, and meeting customized and personalized needs. Meanwhile, its strong memory capabilities avoid repeated mistakes, and evolutionary abilities can identify users' potential preferences for deep alignment, exploring optimization paths and collaborative efficiency improvement for large models in human-AI collaboration.
 
-实验内容：通过多方利益相关者评估，深入探讨了LLMs在模拟医患沟通中的有效性、优势与待改进之处。Epitome支撑整个数字化实验的设计与执行，研究团队通过该平台成功模拟并管理了涉及多个变量的复杂实验流程。研究团队能够便捷地接入并管理实验中使用的多款不同的LLM。
+## Researcher Testimonials
 
-### 实验2 爱荷华博弈（IGT）人机交互协作决策实验
+### Experiment 1: Assessment of Patient-Centered Communication Capabilities of Medical AI
+**Purpose**: Systematically evaluate the performance of artificial intelligence, particularly large models applied in healthcare, in patient-centered communication (PCC) capabilities.
 
-目的：探究LLM协作伙伴的领导模式对人机合作IGT决策策略的影响。
+**Experimental Content**: Through multi-stakeholder assessment, we deeply explored the effectiveness, advantages, and areas for improvement of LLMs in simulated doctor-patient communication. Epitome supported the design and execution of the entire digital experiment, enabling the research team to successfully simulate and manage complex experimental processes involving multiple variables through the platform. The research team could conveniently access and manage multiple different LLMs used in the experiment.
 
-实验内容：探讨在人机群体决策下，综合考虑大模型本身在面对多轮连续决策时的特性，大模型IGT任务表现是否优于人类任务表现?如何提升任务表现，以及当爱荷华牌堆序列变化是否会影响大模型任务表现？实验使用Epitome人智混合聊天室（高阶版）中多角色多流程模块设置完整实验交互流程及环境。并进一步调用Dify工作流将LLM在不同环境变量干预下深度嵌入实验流程，实现LLM人机协作决策过程，构建全新人机合作实验范式。
+### Experiment 2: Iowa Gambling Task (IGT) Human-AI Interactive Collaborative Decision-Making Experiment
+**Purpose**: Explore the impact of LLM collaborative partner leadership modes on human-AI cooperative IGT decision-making strategies.
 
-### 实验3 自动化AI模拟客服代表回复满意度评测
+**Experimental Content**: Explore whether large models' IGT task performance is superior to human task performance in human-AI group decision-making, considering the characteristics of large models when facing multi-round continuous decisions. How to improve task performance, and whether changes in Iowa card deck sequences affect large model task performance? The experiment used Epitome's human-AI hybrid chat room (advanced version) multi-role multi-process module to set up complete experimental interaction processes and environments. It further called Dify workflows to deeply embed LLMs into experimental processes under different environmental variable interventions, implementing LLM human-AI collaborative decision-making processes and constructing new human-AI cooperation experimental paradigms.
 
-实验目的：系统化评估 AI 在呼叫中心场景中模拟人工客服的能力，量化其对工作效率、客户满意度及客服自我效能的提升幅度。
+### Experiment 3: Automated AI Simulated Customer Service Representative Response Satisfaction Assessment
+**Purpose**: Systematically evaluate AI's ability to simulate human customer service in call center scenarios, quantifying its improvement in work efficiency, customer satisfaction, and customer service self-efficacy.
 
-实验内容：基于Epitome平台 Dify 工作流调度多款 LLM，分别构建“自动化 AI 客服”和“个性化 AI 客服”两种模式，比较其在真实查询场景中的响应表现与价值增益。通过可视化工作流管理快速接入多版本客服模型，并将其无缝嵌入实验设计，实现复杂变量控制与数据采集的一体化管理。研究团队通过该平台能够便捷的管理多个不同的工作流。
+**Experimental Content**: Based on the Epitome platform's Dify workflow scheduling of multiple LLMs, we separately constructed "automated AI customer service" and "personalized AI customer service" modes, comparing their response performance and value benefits in real query scenarios. Through visual workflow management, we quickly accessed multiple versions of customer service models and seamlessly embedded them into experimental design, achieving integrated management of complex variable control and data collection. The research team could conveniently manage multiple different workflows through the platform.
 
-### 实验4 多智能体海因兹困境交互行为与人机群体决策偏差
-实验目的：评估基于大语言模型（LLMs）的人工智能在类人社会情境中的行为表现，尤其是在道德困境中的决策倾向与情绪表达。
+### Experiment 4: Multi-Agent Heinz Dilemma Interactive Behavior and Human-AI Group Decision Bias
+**Purpose**: Evaluate the behavioral performance of artificial intelligence based on large language models (LLMs) in human-like social contexts, especially decision-making tendencies and emotional expressions in moral dilemmas.
 
-实验内容：本实验以经典的海因兹困境为背景，依托“AI小镇”构建由7个具备背景故事和个性特征的AI角色组成的互动社会，模拟AI在道德困境中的社会行为与情绪反应。Epitome平台支持角色设定、模型调用与对话记录，生成结构化文本数据，便于开展语义与情绪分析，辅助研究AI在拟人社会中的表现特征。
+**Experimental Content**: Using the classic Heinz dilemma as background, this experiment relies on "AI Town" to construct an interactive society composed of 7 AI characters with background stories and personality traits, simulating AI's social behavior and emotional reactions in moral dilemmas. The Epitome platform supports character setting, model calling, and dialogue recording, generating structured text data for semantic and emotional analysis, assisting research on AI's performance characteristics in anthropomorphic society.
 
-## 联系我们
-如果你对本平台感兴趣，或是有社会实验需求，可以通过如下方式与我们联系，欢迎询问。
+## Contact Us
+If you are interested in this platform or have social experiment needs, you can contact us through the following methods. Inquiries are warmly welcome.
 
-**联系邮箱：** yeyulei@pjlab.org.cn
+**Contact Email**: yeyulei@pjlab.org.cn
 
-**微信公众号：** Epitome
+**WeChat Official Account**: Epitome
 
-**微信群聊：**
-<p  align="left"><img  src="./meida/Wechat.png"  width="400"></p>
+**WeChat Group Chat**:
+<p align="left"><img src="./meida/Wechat.png" width="400"></p>
