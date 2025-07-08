@@ -5,6 +5,8 @@
 
 [**Epitome**](http://www.epitome-ai.com) is the world's first experimental open platform dedicated to the deep integration of artificial intelligence and social sciences. Through seven major modules, the platform provides intelligent assistance across entire process，ranging from experimental intervention, experimental environment, to experimental participants, helping researchers easily design and conduct complex human-computer interaction experimental scenarios. This enables systematic research on AI's social impact and exploration of comprehensive solutions, advancing the harmonious integration of artificial intelligence into human society.
 
+For more information, please refer to [the introduction vedio](https://youtu.be/i7WFY5xNJ_c).
+
 ## Key Features
 ### **Innovative Interactive Scenarios, Expanding Research Boundaries**
 
@@ -78,7 +80,7 @@ This experiment focuses on chain of thought, human feedback, human-AI collaborat
 ## Contact Us
 If you are interested in this platform or have social experiment needs, you can contact us through the following methods. Inquiries are warmly welcome.
 
-**Contact Email**: yeyulei@pjlab.org.cn
+**Email**: yeyulei@pjlab.org.cn
 
 **WeChat Official Account**: Epitome
 
