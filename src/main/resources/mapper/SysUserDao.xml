@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nbtech.ailab.biz.dao.SysUserDao">
+
+
+    <delete id="deleteUserRole">
+        delete
+        from sys_user_role
+        where is_deleted = 0 and user_id in
+        <foreach collection="idList" separator="," close=")" open="(" item="userId">
+            #{userId}
+        </foreach>
+    </delete>
+
+    <select id="getSysUserRole" resultType="com.nbtech.ailab.biz.dto.SysRoleDto">
+        select sr.id,
+               sr.name
+        from sys_user u
+                 left join sys_user_role ur on u.id = ur.user_id and ur.is_deleted = 0
+                 left join sys_role sr on sr.id = ur.role_id and sr.is_deleted = 0
+        where u.is_deleted = 0 and u.id = #{userId} and u.status = 1
+          and sr.id is not null
+    </select>
+
+    <select id="getPage" resultType="com.nbtech.ailab.biz.dto.SysUserDto">
+        select
+            a.id,
+            a.username,
+            a.password,
+            a.real_name,
+            a.email,
+            a.mobile,
+            a.dept_name,
+            a.status,
+            a.remark,
+            c.english_name englishNames,
+            c.name roleName,
+            c.id roleIds
+        from sys_user a
+        left join sys_user_role b on a.id =b.user_id and b.is_deleted = 0
+        join sys_role c on b.role_id = c.id and c.is_deleted = 0 and c.id != 3
+        where a.is_deleted = 0
+        <if test="dto.username != null and dto.username !=''">
+            and a.username like concat ('%',#{dto.username},'%')
+        </if>
+        <if test="dto.status != null and dto.status !=''">
+            and a.status = #{dto.status}
+        </if>
+        <if test="dto.roleName != null and dto.roleName !=''">
+            and c.name = #{dto.roleName}
+        </if>
+        <if test="dto.mobile != null and dto.mobile !=''">
+            and a.mobile like concat ('%',#{dto.mobile},'%')
+        </if>
+        <if test="dto.email != null and dto.email !=''">
+            and a.email like concat ('%',#{dto.email},'%')
+        </if>
+        <if test="dto.id != null and dto.id !=''">
+            and a.id = #{dto.id}
+        </if>
+        order by a.update_date desc
+    </select>
+
+    <select id="getNonDifyAccount" resultType="com.nbtech.ailab.biz.entity.SysUserEntity">
+        select *
+        from sys_user
+        where dify_account_mail is null
+          and is_deleted = 0
+          and username not like 'EP%'
+    </select>
+    <select id="getTeacherNumber" resultType="java.lang.Integer">
+        select count(distinct a.id)
+        from sys_user a
+                 join sys_user_role b on a.id = b.user_id and b.is_deleted = 0
+        where a.is_deleted = 0 and  b.role_id != 3
+    </select>
+
+</mapper>

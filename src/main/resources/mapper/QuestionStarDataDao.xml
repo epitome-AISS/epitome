@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nbtech.ailab.biz.dao.QuestionStarDataDao">
+
+    <resultMap type="com.nbtech.ailab.biz.entity.QuestionStarDataEntity" id="questionStarDataMap">
+        <result property="id" column="id"/>
+        <result property="activity" column="activity"/>
+        <result property="name" column="name"/>
+        <result property="ipaddress" column="ipaddress"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="joinid" column="joinid"/>
+        <result property="timetaken" column="timetaken"/>
+        <result property="submittime" column="submittime"/>
+        <result property="totalvalue" column="totalvalue"/>
+        <result property="sign" column="sign"/>
+        <result property="creator" column="creator"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updater" column="updater"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="createName" column="create_name"/>
+        <result property="updateName" column="update_name"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+    <select id="getQuestionStarList" resultType="com.nbtech.ailab.biz.entity.QuestionStarDataEntity">
+        SELECT *
+        FROM t_question_star_data
+        WHERE sojumpparm like concat('%', #{elementId}, '%')
+          and is_deleted = 0
+    </select>
+    <select id="getProcessQuestionnaire" resultType="com.nbtech.ailab.biz.dto.ProcessQuestionnaireVo">
+        select distinct questionnaire_id,
+                        element_id,
+                        process_id
+        from t_questionnaire_data
+        where groups_id = #{groupId}
+    </select>
+    <select id="getProcessData" resultType="com.nbtech.ailab.biz.dto.ProcessQuestionnaireExcelVo">
+        select a.*,b.username from (select
+                           groups_id,
+                           question_name,
+                           question_sort,
+                           element_id,
+                           round,
+                           answer,
+                           user_id,
+                           process_id,
+                           questionnaire_id
+                       from t_questionnaire_record
+                       where is_deleted = 0
+                         and groups_id = #{groupId}
+                         and questionnaire_id = #{questionnaireId}
+                         and element_id = #{elementId}
+                         and process_id = #{processId}
+                         and source_type = 'WORKPROCESS'
+
+                       union all
+
+                       select
+                           groups_id,
+                           question_name,
+                           question_sort,
+                           element_id,
+                           round,
+                           scale_grade,
+                           user_id,
+                           process_id,
+                           questionnaire_id
+                       from t_questionnaire_scale
+                       where is_deleted = 0
+                         and groups_id = #{groupId}
+                         and questionnaire_id = #{questionnaireId}
+                         and element_id = #{elementId}
+                         and process_id = #{processId}
+                         and source_type = 'WORKPROCESS'
+
+                       union all
+
+                       select
+                           groups_id,
+                           question_name,
+                           question_sort,
+                           element_id,
+                           round,
+                           choice_context,
+                           user_id,
+                           process_id,
+                           questionnaire_id
+                       from t_questionnaire_selection
+                       where is_deleted = 0
+                         and groups_id = #{groupId}
+                         and questionnaire_id = #{questionnaireId}
+                         and element_id = #{elementId}
+                         and process_id = #{processId}
+                         and source_type = 'WORKPROCESS') a
+            left join sys_user b on a.user_id = b.id
+        order by a.user_id,
+                 a.question_name,
+                 a.question_sort
+    </select>
+
+
+</mapper>

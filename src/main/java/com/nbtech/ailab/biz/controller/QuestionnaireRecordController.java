@@ -1,0 +1,72 @@
+package com.nbtech.ailab.biz.controller;
+
+
+import com.nbtech.ailab.biz.dto.QuestionnaireRecordDto;
+import com.nbtech.ailab.biz.service.IQuestionnaireRecordService;
+import com.nbtech.common.annotation.LogOperation;
+import com.nbtech.common.model.BizResponse;
+import com.nbtech.common.model.PageDto;
+import com.nbtech.common.model.PageResult;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
+import java.util.List;
+
+
+/**
+ * 问卷(填空、简答)
+ *
+ * @author van vanchen@nb-tec.cn
+ * @since 1.0.0 2024-05-09
+ */
+@RestController
+@RequestMapping("questionnairerecord")
+@Api(tags="问卷(填空、简答)")
+public class QuestionnaireRecordController {
+    @Autowired
+    private IQuestionnaireRecordService questionnaireRecordService;
+
+    @GetMapping("page")
+    @ApiOperation("分页")
+    public BizResponse<PageResult<QuestionnaireRecordDto>> page(PageDto pageDto, QuestionnaireRecordDto dto){
+        PageResult<QuestionnaireRecordDto> page = questionnaireRecordService.page(pageDto, dto);
+        return BizResponse.success(page);
+    }
+
+    @GetMapping("{id}")
+    @ApiOperation("信息")
+    public BizResponse<QuestionnaireRecordDto> get(@PathVariable("id") Long id){
+        QuestionnaireRecordDto data = questionnaireRecordService.get(id);
+        return BizResponse.success(data);
+    }
+
+    @PostMapping
+    @ApiOperation("保存")
+    @LogOperation("保存")
+    public BizResponse<?> save(@RequestBody QuestionnaireRecordDto dto){
+        questionnaireRecordService.save(dto);
+        return BizResponse.success();
+    }
+
+    @PutMapping
+    @ApiOperation("修改")
+    @LogOperation("修改")
+    public BizResponse<?> update(@RequestBody QuestionnaireRecordDto dto){
+        questionnaireRecordService.update(dto);
+        return BizResponse.success();
+    }
+
+    @DeleteMapping
+    @ApiOperation("删除")
+    @LogOperation("删除")
+    public BizResponse<?> delete(@RequestBody Long[] ids){
+        questionnaireRecordService.delete(Arrays.asList(ids));
+        return BizResponse.success();
+    }
+
+
+}

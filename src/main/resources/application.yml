@@ -1,0 +1,38 @@
+spring:
+  profiles:
+    active: testLocal
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
+      enabled: true
+  mvc:
+    pathmatch:
+      matching-strategy: ant-path-matcher
+
+  #mybatis
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/*.xml
+  typeAliasesPackage: com.nbtech.ailab.biz.entity
+  global-config:
+    db-config:
+      id-type: AUTO
+      # 逻辑删除字段
+      logic-delete-field: is_deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+    banner: false
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    call-setters-on-nulls: true
+    jdbc-type-for-null: 'null'
+  configuration-properties:
+    prefix:
+    blobType: BLOB
+    boolValue: TRUE
+
+knife4j:
+  enable: true
+
+

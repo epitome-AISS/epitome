@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nbtech.ailab.biz.dao.InitialPushDao">
+
+    <resultMap type="com.nbtech.ailab.biz.entity.InitialPushEntity" id="initialPushMap">
+        <result property="id" column="id"/>
+        <result property="elementId" column="element_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="data" column="data"/>
+    </resultMap>
+    <select id="getInitialData" resultType="com.nbtech.ailab.biz.entity.InitialPushEntity">
+        select a.*,
+               b.username
+        from t_initial_push a
+                 left join sys_user b on a.user_id = b.id
+        where element_id = #{elementId}
+    </select>
+
+
+</mapper>

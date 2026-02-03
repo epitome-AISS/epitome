@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nbtech.ailab.biz.dao.GroupsDao">
+    <insert id="addGroupPerson">
+        update
+            t_groups
+        set groups_person_number = groups_person_number + #{number}
+        where id = #{groupId}
+    </insert>
+    <delete id="deleteByIds">
+        update
+            t_groups a left join t_groups_person b on a.id = b.groups_id
+            set a.is_deleted =1,
+                b.is_deleted =1
+        where a.id in
+        <foreach collection="ids" separator="," item="id" close=")" open="(">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getGroupsByPlan" resultType="com.nbtech.ailab.biz.entity.GroupsEntity">
+        select
+            id,
+            groups_name,
+            groups_person_number,
+            creator,
+            create_date,
+            updater,
+            update_date,
+            experiment_id,
+            is_deleted,
+            scene_id,
+            process_dag,
+            model,
+            data_collection
+        from t_groups
+        where experiment_id = #{planId}
+        and is_deleted = 0
+        order by id
+    </select>
+
+    <select id="getKeyString" resultType="java.lang.String">
+        select
+            secret
+        from t_groups
+        where is_deleted = 0 and id = #{groupId}
+    </select>
+    <select id="getExpermentPlan" resultType="com.nbtech.ailab.biz.entity.ExperimentPlanEntity">
+        select a.id,
+               a.experiment_name,
+               a.experiment_code,
+               a.experiment_scene,
+               b.groups_person_number experimentPersonNumber,
+               a.experiment_contact,
+               a.contact_email
+        from t_experiment_plan a
+                 join t_groups b on a.id = b.experiment_id and b.is_deleted = 0
+        where a.is_deleted = 0
+          and b.id = #{id}
+    </select>
+    <select id="sumPersonNumber" resultType="java.lang.Integer">
+        select ifnull(sum(groups_person_number),0)
+        from t_groups
+        where is_deleted = 0 and experiment_id = #{experimentId}
+    </select>
+    <select id="getMaterialIds" resultType="java.lang.Long">
+        SELECT DISTINCT
+            jt.materialId
+        FROM
+            t_groups,
+            JSON_TABLE (
+                    process_config,
+                    '$[*]' COLUMNS ( type VARCHAR ( 255 ) PATH '$.type', materialId VARCHAR ( 255 ) PATH '$.config.material.materialId' )) AS jt
+        WHERE
+            jt.type = 'intervene';
+    </select>
+    <select id="getQuestionnaireIds" resultType="java.lang.Long">
+        SELECT DISTINCT
+            jt.questionnaireId
+        FROM
+            t_groups,
+            JSON_TABLE (
+                    process_config,
+                    '$[*]' COLUMNS ( type VARCHAR ( 255 ) PATH '$.type', questionnaireId VARCHAR ( 255 ) PATH '$.config.questionnaireId' )) AS jt
+        WHERE
+            is_deleted = 0 and  jt.type = 'collection';
+    </select>
+    <select id="getDialogueIds" resultType="java.lang.Long">
+        SELECT DISTINCT
+            jt.dialogueId
+        FROM
+            t_groups,
+            JSON_TABLE (
+                    process_config,
+                    '$[*]' COLUMNS ( type VARCHAR ( 255 ) PATH '$.type', dialogueId VARCHAR ( 255 ) PATH '$.config.dialogueId' )) AS jt
+        WHERE
+            is_deleted = 0 and jt.type = 'dialogue';
+    </select>
+
+    <select id="getExperiment" resultType="com.nbtech.ailab.vo.ExperimentVo">
+        select
+            a.groups_id groupIds,
+            b.id experimentIds
+        from t_groups_person a
+                 left join t_experiment_plan b on a.experiment_code = b.experiment_code and a.experiment_name = b.experiment_name and b.is_deleted = 0
+        where a.is_deleted = 0 and a.user_id = #{userId}
+    </select>
+
+    <select id="getGroupIdList" resultType="java.lang.Long">
+        select id
+        from t_groups
+        where is_deleted = 0 and experiment_id = #{planId}
+    </select>
+
+    <select id="getExperimentGroupName" resultType="com.nbtech.ailab.vo.ExperimentGroupVo">
+        select
+            experiment_name experimentName,
+            groups_name groupsName,
+            process_config
+        from t_experiment_plan a
+            left join t_groups b on a.id = b.experiment_id and b.is_deleted = 0
+        where a.is_deleted = 0
+          and b.id = #{experimentId}
+    </select>
+    <select id="getElementById" resultType="java.lang.String">
+        SELECT
+            jt.id AS elementId
+        FROM
+            t_groups tg,
+            JSON_TABLE (
+                    process_config,
+                    '$[*]' COLUMNS ( id VARCHAR ( 255 ) PATH '$.id', questionnaireId LONG PATH '$.config.questionnaireId' )) AS jt
+        WHERE
+            tg.id = #{groupId}
+          AND tg.experiment_id = #{experimentId}
+          AND jt.questionnaireId = #{questionnaireId}
+           and tg.is_deleted = 0
+    </select>
+    <select id="getNextElementTime" resultType="java.time.LocalDateTime">
+        select
+            max(create_date)
+        from t_experiment_progress
+        where experiment_id = #{experimentId}
+          and groups_id = #{groupsId}
+          and element_id = #{elementId}
+          and user_id = #{userId}
+    </select>
+    <select id="getGroupsHaveQuestionnaireIds" resultType="com.nbtech.ailab.biz.dto.ParamDto">
+        SELECT DISTINCT
+            jt.questionnaireId AS elementId,
+            tg.experiment_id,
+            tg.create_name
+        FROM
+            t_groups tg,
+            JSON_TABLE (
+                    process_config,
+                    '$[*]' COLUMNS ( type VARCHAR ( 255 ) PATH '$.type', questionnaireId VARCHAR ( 255 ) PATH '$.config.questionnaireId' )) AS jt
+        WHERE
+            tg.is_deleted = 0 and  jt.type = 'collection';
+    </select>
+    <select id="getGroupsHaveDialogueIds" resultType="com.nbtech.ailab.biz.dto.ParamDto">
+        SELECT DISTINCT
+            jt.dialogueId AS elementId,
+            tg.experiment_id,
+            tg.create_name
+        FROM
+            t_groups tg,
+            JSON_TABLE (
+                    process_config,
+                    '$[*]' COLUMNS ( type VARCHAR ( 255 ) PATH '$.type', dialogueId VARCHAR ( 255 ) PATH '$.config.dialogueId' )) AS jt
+        WHERE
+            is_deleted = 0 and jt.type = 'dialogue';
+    </select>
+    <select id="getGroupsHaveInterveneIds" resultType="com.nbtech.ailab.biz.dto.ParamDto">
+        SELECT DISTINCT
+            jt.materialId AS elementId,
+            tg.experiment_id,
+            tg.create_name
+        FROM
+            t_groups tg,
+            JSON_TABLE (
+                    process_config,
+                    '$[*]' COLUMNS ( type VARCHAR ( 255 ) PATH '$.type', materialId VARCHAR ( 255 ) PATH '$.config.material.materialId' )) AS jt
+        WHERE
+            tg.is_deleted = 0 and jt.type = 'intervene'
+    </select>
+    <select id="getProcessConfigStrings" resultType="com.nbtech.ailab.biz.dto.GroupsDto">
+        SELECT
+            tg.id,
+            tg.process_config
+        FROM
+            `t_groups` tg,
+            JSON_TABLE(
+                    process_config,
+                    '$[*]' COLUMNS (
+	type VARCHAR(255) PATH '$.type'
+	,materialId VARCHAR ( 255 ) PATH '$.config.material.materialId'
+	)) AS jt
+        WHERE jt.type='intervene' AND jt.materialId = #{materialId}
+    </select>
+
+    <select id="getRoomElementId" resultType="java.lang.String">
+        SELECT distinct jt.id
+        FROM t_groups tg,
+             JSON_TABLE(
+                     process_config,
+                     '$[*]' COLUMNS ( type VARCHAR ( 255 ) PATH '$.type',
+                        id VARCHAR ( 255 ) PATH '$.id' )
+             ) AS jt
+        WHERE tg.is_deleted = 0 and tg.id = #{groupId} and
+            jt.type = 'chatroom';
+    </select>
+
+    <select id="getExperimentScene" resultType="java.lang.String">
+        select b.experiment_scene
+        from t_groups a
+                 left join t_experiment_plan b on a.experiment_id = b.id
+        where a.id = #{groupId}
+    </select>
+
+    <select id="getMaterialGroupElementId" resultType="java.lang.String">
+        SELECT
+            distinct
+            jt.id elementId
+        FROM t_groups tg,
+             JSON_TABLE(
+                     process_config,
+                     '$[*]' COLUMNS ( type VARCHAR(255) PATH '$.type',
+                 id VARCHAR(255) PATH '$.id',
+                 sequence VARCHAR(255) PATH '$.sequence',
+                 materialType VARCHAR(255) PATH '$.config.material.type')
+             ) AS jt
+        WHERE tg.is_deleted = 0
+          and tg.id = #{groupId}
+          and jt.type = 'intervene'
+          and jt.materialType = 'MATERIAL_GROUP';
+    </select>
+</mapper>

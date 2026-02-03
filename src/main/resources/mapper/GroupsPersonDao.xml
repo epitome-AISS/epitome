@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nbtech.ailab.biz.dao.GroupsPersonDao">
+
+
+    <select id="getUserExperimentId" resultType="java.lang.Long">
+        select count(*)
+        from t_groups_person a
+                 left join (select a.experiment_name,
+                                   a.experiment_code,
+                                   a.user_id
+                            from t_groups_person a
+                            where a.is_deleted = 0
+                              and a.user_id = #{userId}) b
+                           on a.experiment_name = b.experiment_name and a.experiment_code = b.experiment_code
+        where a.experiment_id = #{planId} and a.experiment_status = #{status}
+    </select>
+    <select id="getExperimentId" resultType="java.lang.Long">
+        select b.id
+        from t_groups_person a
+                 left join t_experiment_plan b on a.experiment_name = b.experiment_name and a.experiment_code = b.experiment_code and b.is_deleted =0
+        where a.is_deleted = 0 and a.user_id = #{userId}
+    </select>
+
+
+    <select id="getAddressByGroupId" resultType="com.nbtech.ailab.biz.dto.AddressTotalDto">
+        SELECT
+            DISTINCT CASE WHEN address IS NULL THEN '未知'
+                          WHEN address = '0' THEN '未知'
+                          ELSE address END as name,
+                     COUNT(*) AS number
+        FROM
+            t_groups_person
+        WHERE is_deleted = 0
+          AND groups_id= #{id} AND start_time IS NOT NULL
+        GROUP BY
+            name;
+    </select>
+    <select id="getCommonDate" resultType="java.time.LocalDate">
+        SELECT DISTINCT result.VALUE
+        FROM (SELECT DATE(start_time) AS VALUE
+        FROM t_groups_person
+        WHERE is_deleted = 0 and t_groups_person.groups_id = #{groupId}
+        UNION ALL
+        SELECT DATE(end_time) AS VALUE
+        FROM t_groups_person
+        WHERE is_deleted = 0 and t_groups_person.groups_id = #{groupId}
+            ) AS result
+        WHERE result.
+            VALUE IS NOT NULL
+        ORDER BY VALUE DESC;
+    </select>
+    <select id="getFinishedNumber" resultType="java.lang.Long">
+        SELECT
+            COUNT(*)
+        FROM
+            t_groups_person
+        WHERE
+            is_deleted = 0 and end_time is not null and groups_id = #{groupId} AND DATE(end_time) = #{commonDate}
+    </select>
+    <select id="getSumNumber" resultType="java.lang.Long">
+        SELECT
+        COUNT(*)
+        FROM
+        t_groups_person
+        WHERE
+            is_deleted = 0 and end_time is not null and groups_id = #{groupId} and DATE(end_time) &lt;= #{currentDay};
+    </select>
+    <select id="getProcessingNumber" resultType="java.lang.Long">
+        SELECT
+            COUNT(*)
+        FROM
+            t_groups_person tg
+        WHERE
+            is_deleted = 0 and tg.groups_id = #{groupId} AND tg.start_time IS NOT  NULL AND tg.end_time IS NULL
+    </select>
+    <select id="getUserInfo" resultType="com.nbtech.ailab.biz.dto.UserInfoDto">
+        SELECT
+            su.id AS userId,
+            su.username AS userName,
+            tg.ip,
+            tg.address,
+            tg.start_time,
+            tg.end_time
+        FROM
+            t_groups_person tg
+                LEFT JOIN sys_user su ON su.is_deleted = 0 and tg.user_id = su.id
+        WHERE
+            tg.is_deleted = 0 and tg.experiment_id = #{experimentId}
+          AND tg.groups_id = #{groupId}
+    </select>
+
+    <select id="getGroupsList" resultType="java.lang.Long">
+        select a.id
+        from t_groups a
+                 left join t_experiment_plan b on a.experiment_id = b.id
+        where b.is_deleted = 0 and a.is_deleted = 0 and b.experiment_status = #{status}
+    </select>
+
+    <select id="countGroupStart" resultType="java.lang.Long">
+        select count(id)
+        from t_groups_person
+        where is_deleted = 0
+          and groups_id = #{groupId}
+          and DATE(start_time) &lt;= #{yesterday}
+    </select>
+    <select id="countProcessing" resultType="java.lang.Long">
+        SELECT
+        (SELECT COUNT(*) FROM t_groups_person WHERE groups_id = #{groupId} and is_deleted = 0 and start_time IS NOT NULL and DATE(start_time) &lt;= #{currentDay} ) -
+        (SELECT COUNT(*) FROM t_groups_person WHERE groups_id = #{groupId} and is_deleted = 0 and start_time IS NOT NULL and DATE(start_time) &lt;= #{currentDay} and DATE(end_time) &lt;= #{currentDay}) AS difference_count;
+    </select>
+
+    <select id="getGroupUserList" resultType="java.lang.Long">
+        select a.user_id
+        from t_groups_person a
+        where a.groups_id = #{groupId}
+          and a.is_deleted = 0
+    </select>
+
+    <select id="getUserGroupId" resultType="java.lang.Long">
+        select groups_id
+        from t_groups_person
+        where is_deleted = 0
+          and user_id = #{userId}
+    </select>
+</mapper>

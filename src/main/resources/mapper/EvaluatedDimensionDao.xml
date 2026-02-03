@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nbtech.ailab.biz.dao.EvaluatedDimensionDao">
+
+    <resultMap type="com.nbtech.ailab.biz.entity.EvaluatedDimensionEntity" id="evaluatedDimensionMap">
+        <result property="id" column="id"/>
+        <result property="groupsId" column="groups_id"/>
+        <result property="region" column="region"/>
+        <result property="personnelCount" column="personnel_count"/>
+        <result property="creator" column="creator"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updater" column="updater"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="updateName" column="update_name"/>
+        <result property="createName" column="create_name"/>
+    </resultMap>
+
+    <select id="countAddress" resultType="com.nbtech.ailab.biz.entity.EvaluatedDimensionEntity">
+        select
+            groups_id as groupsId,
+            address as region,
+            count(*) as personnelCount
+        from t_groups_person
+        where is_deleted = 0
+          and groups_id = #{groupId}
+          and address is not null
+        group by groups_id,address
+    </select>
+
+</mapper>

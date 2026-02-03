@@ -1,0 +1,75 @@
+server:
+  port: 8085
+  tomcat:
+    connection-timeout: 7200000  # 2小时，单位毫秒
+    keep-alive-timeout: 7200000   # 2小时，单位毫秒
+    max-keep-alive-requests: -1   # 无限制
+spring:
+  datasource:
+    # MySQL配置
+    url: jdbc:mysql://{your_mysql_ip}:{your_mysql_port}/{your_mysql_schema}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&nullCatalogMeansCurrent=true
+    username: {your_mysql_count}
+    password: {your_mysql_password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    #连接池
+    hikari:
+      maximum-pool-size: 50
+  redis:
+    database: 1
+    host: {your_redis_ip}
+    port: {your_redis_port}
+    timeout: 6000ms
+    jedis:
+      pool:
+        max-active: 1000  # 连接池最大连接数（使用负值表示没有限制）
+        max-wait: -1ms    # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-idle: 10      # 连接池中的最大空闲连接
+        min-idle: 5       # 连接池中的最小空闲连接
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*Dao.xml
+  type-aliases-package: com.nbtech.cdp.external.service.entity
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    #数据库相关配置
+    db-config:
+      #主键类型
+      id-type: AUTO
+    banner: false
+    #原生配置
+    configuration:
+      map-underscore-to-camel-case: true
+      cache-enabled: false
+      call-setters-on-nulls: true
+      jdbc-type-for-null: 'null'
+    configuration-properties:
+      prefix:
+      blobType: BLOB
+      boolValue: TRUE
+
+minio:
+  endpoint: http://{your_minio_ip}:{your_minio_port}
+  useUrl: http://{minio_web_address}
+  accessKey: {your_minio_accessKey}
+  secretKey: {your_minio_secretKey}
+  bucketName: {your_minio_bucketName}
+  questionnaire: questionnaireTest
+  # 实验人群包导出使用的做实验地址
+experiment:
+  address: http://{experiment-test-address}
+
+  # 基础模型校验是否可用地址
+basicModel:
+  address: http://{test-use-model}
+
+excel:
+  path: {export-excel-address}
+
+python:
+  path: {word-cloud-address}
+
+questionnaire:
+  appid: {wjx-appid}
+  appkey: {wjx-appkey}
+  address: https://www.wjx.cn/zunxiang

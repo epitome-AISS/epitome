@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nbtech.ailab.biz.dao.ModelHistoryDao">
+
+    <resultMap type="com.nbtech.ailab.biz.entity.ModelHistoryEntity" id="modelHistoryMap">
+        <result property="id" column="id"/>
+        <result property="groupsId" column="groups_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="elemenId" column="elemen_id"/>
+        <result property="creator" column="creator"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updater" column="updater"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="updateName" column="update_name"/>
+        <result property="createName" column="create_name"/>
+    </resultMap>
+
+    <select id="getModelRecord" resultType="com.nbtech.ailab.biz.entity.HistoryRecordEntity">
+        select
+            b.record,
+            b.role,
+            b.addition_info
+        from t_model_history a
+                 left join t_history_record b on a.id = b.history_id and b.is_deleted = 0
+        where a.is_deleted = 0
+          and a.groups_id = #{groupId}
+          and a.user_id = #{userId}
+          and a.elemen_id = #{elementId}
+          and a.model_name in
+            <foreach collection="modelNames" open="(" close=")" separator="," item="modelName">
+                #{modelName}
+            </foreach>
+        order by b.create_date,b.id
+    </select>
+
+    <select id="getLastModel" resultType="java.lang.String">
+        select
+            a.model_name
+        from t_model_history a
+        where a.is_deleted = 0
+            and a.groups_id = #{groupId}
+            and a.elemen_id = #{element}
+        order by a.create_date desc
+        limit 1
+    </select>
+
+    <select id="getTotalRound" resultType="com.nbtech.ailab.biz.entity.ModelRecordEntity">
+        select a.groups_id,
+               a.model_name,
+               count(b.role) roundCount,
+               sum(b.word_number) questionWords
+        from t_model_history a
+                 left join t_history_record b on a.id = b.history_id and b.is_deleted = 0
+        where a.is_deleted = 0
+          and a.groups_id = #{groupId}
+          and a.model_name in
+          <foreach collection="modelNames" item="modelName" separator="," close=")" open="(">
+              #{modelName}
+          </foreach>
+          and b.role = #{user}
+        group by a.model_name
+    </select>
+
+    <select id="getTotalAnswers" resultType="com.nbtech.ailab.biz.entity.ModelRecordEntity">
+        select sum(b.record_time) spentTime,
+               sum(b.word_number) answerWords
+        from t_model_history a
+                 left join t_history_record b on a.id = b.history_id and b.is_deleted = 0
+        where a.is_deleted = 0
+          and a.groups_id = #{groupsId}
+          and a.model_name = #{modelName}
+          and b.role = #{role}
+    </select>
+
+    <select id="getTotalUser" resultType="java.lang.Integer">
+        select count(a.user_id)
+        from t_model_history a
+        where a.is_deleted = 0
+          and a.groups_id = #{groupsId}
+          and a.model_name =#{modelName}
+    </select>
+
+    <select id="getModelUserNumber" resultType="com.nbtech.ailab.vo.ModelUserVo">
+        select
+            model_name modelUser,
+            model_id modelId,
+        count(distinct user_id) number
+        from t_model_history
+        where is_deleted = 0
+        and groups_id = #{groupId}
+        and elemen_id = #{elementId}
+        and model_id in
+        <foreach collection="modelIds" item="modelId" open="(" close=")" separator=",">
+            #{modelId}
+        </foreach>
+        group by model_name,model_id
+    </select>
+
+    <select id="getModelUserCount" resultType="com.nbtech.ailab.vo.PersonUseCountVo">
+        select
+            a.user_id userId,
+            a.model_name modelName,
+            a.model_id modelId,
+            count(*) number
+        from t_model_history a
+        left join t_history_record b on a.id = b.history_id and b.role = 'assistant' and b.is_deleted = 0
+        where a.is_deleted = 0
+        and a.elemen_id = #{elementId}
+        and a.groups_id = #{groupId}
+        and a.model_id in
+        <foreach collection="modelIds" item="modelId" open="(" close=")" separator=",">
+            #{modelId}
+        </foreach>
+        group by a.user_id,a.model_name, a.model_id;
+    </select>
+
+    <select id="getAvgUserWord" resultType="com.nbtech.ailab.vo.ModelUserVo">
+        select
+            a.user_id modelUser,
+            ROUND(avg(word_number)) number
+        from t_model_history a
+                 left join t_history_record b on a.id = b.history_id and b.role = 'user' and b.is_deleted = 0
+        where a.is_deleted = 0
+          and a.elemen_id = #{elementId}
+          and a.groups_id = #{groupId}
+          and a.model_id in
+          <foreach collection="modelIds" item="modeId" open="(" close=")" separator=",">
+            #{modeId}
+          </foreach>
+        group by a.user_id
+    </select>
+
+    <select id="getAvgModelWord" resultType="com.nbtech.ailab.vo.ModelUserVo">
+        select
+            a.model_name modelUser,
+            a.model_id modelId,
+            ROUND(avg(word_number)) number
+        from t_model_history a
+                 left join t_history_record b on a.id = b.history_id and b.role = 'assistant' and b.is_deleted = 0
+        where a.is_deleted = 0
+          and a.elemen_id = #{elementId}
+          and a.groups_id = #{groupId}
+          and a.model_id in
+          <foreach collection="modelIds" item="modelId" open="(" close=")" separator=",">
+              #{modelId}
+          </foreach>
+        group by a.model_name,a.model_id
+    </select>
+
+    <select id="getAvgUseTime" resultType="com.nbtech.ailab.vo.ModelUserVo">
+        select
+            a.model_name modelUser,
+            a.model_id modelId,
+            ROUND(avg(b.record_time)) number
+        from t_model_history a
+        left join t_history_record b on a.id = b.history_id and b.is_deleted = 0 and b.role ='user'
+        where a.is_deleted = 0
+        and a.elemen_id = #{elementId}
+        and a.groups_id = #{groupId}
+        and a.model_id in
+        <foreach collection="modelIds" item="modelId" open="(" close=")" separator=",">
+            #{modelId}
+        </foreach>
+        group by a.model_name,a.model_id
+    </select>
+    <select id="getModelInfo" resultType="com.nbtech.ailab.biz.dto.ModelInfoDto">
+        SELECT
+            mh.user_id,
+            bm.id AS modelId,
+            bm.english_name modelName,
+            mh.elemen_id AS elementId,
+            hr.role,
+            hr.record,
+            hr.word_number,
+            hr.record_time AS second
+        FROM
+            t_model_history mh
+            LEFT JOIN t_history_record hr ON mh.id = hr.history_id and hr.is_deleted =0
+            LEFT JOIN t_basic_model bm ON mh.model_id = bm.id and bm.is_deleted =0
+        WHERE
+            mh.is_deleted =0 and mh.groups_id = #{groupId}
+          AND mh.elemen_id = #{elementId}
+        ORDER BY
+            hr.id ASC
+    </select>
+    <select id="getUserIds" resultType="java.lang.Long">
+        select
+            user_id
+        from t_model_history
+        where is_deleted = 0
+          and elemen_id = #{elementId}
+          and groups_id = #{groupId}
+        order by id
+    </select>
+
+    <select id="getModelHistory" resultType="com.nbtech.ailab.biz.dto.ModelInfoDto">
+        select a.user_id,
+               c.username userName,
+               #{elementId} elementId,
+               a.model_name,
+               b.record,
+               b.record_time,
+               b.role,
+               b.word_number
+        from t_model_history a
+                 left join t_history_record b on a.id = b.history_id and b.is_deleted = 0
+                 left join sys_user c on a.user_id = c.id and c.is_deleted = 0
+        where a.is_deleted = 0
+          and a.elemen_id = #{elementId}
+          and a.groups_id = #{groupId}
+          and a.user_id = #{userId}
+        order by b.id asc
+    </select>
+
+</mapper>

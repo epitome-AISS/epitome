@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nbtech.ailab.biz.dao.QuestionnaireScaleDao">
+
+    <resultMap type="com.nbtech.ailab.biz.entity.QuestionnaireScaleEntity" id="questionnaireScaleMap">
+        <result property="id" column="id"/>
+        <result property="groupsId" column="groups_id"/>
+        <result property="operatorPrecedence" column="operator_precedence"/>
+        <result property="questionnaireId" column="questionnaire_id"/>
+        <result property="questionName" column="question_name"/>
+        <result property="scaleGrade" column="scale_grade"/>
+        <result property="spentTime" column="spent_time"/>
+        <result property="creator" column="creator"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updater" column="updater"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="updateName" column="update_name"/>
+        <result property="createName" column="create_name"/>
+    </resultMap>
+    <delete id="deleteByGroupsId">
+        delete
+        from t_questionnaire_scale
+        where groups_id = #{groupId}
+    </delete>
+    <select id="getScaleData" resultType="com.nbtech.ailab.biz.dto.QuestionnaireInfoDto">
+        SELECT tgs.user_id,
+               tgs.questionnaire_id,
+               tgs.question_name,
+               tq.questionnaire_name elementName,
+               tgs.spent_time AS second,
+               tgs.scale_grade AS qaData,
+               4 AS type,
+               tgs.question_sort
+        FROM
+            t_questionnaire_scale tgs
+            left join t_questionnaire tq on tgs.questionnaire_id = tq.id and tq.is_deleted =0
+        WHERE tgs.is_deleted = 0
+          and tgs.groups_id = #{groupId}
+          and tgs.source_type is null
+          AND tgs.questionnaire_id = #{questionnaireId}
+          and tgs.element_id = #{elementId}
+        ORDER BY
+            question_sort
+    </select>
+
+
+</mapper>

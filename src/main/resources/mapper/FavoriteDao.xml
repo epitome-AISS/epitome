@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nbtech.ailab.biz.dao.FavoriteDao">
+
+    <select id="pageFavorite" resultType="com.nbtech.ailab.biz.dto.FavoritePageDto">
+        select
+            epf.id as favorite_id,
+            epf.favorite_time,
+            ep.id,
+            ep.experiment_code,
+            ep.experiment_name,
+            ep.experiment_title,
+            ep.experiment_field,
+            ep.research_hypothesis,
+            ep.experiment_desc,
+            ep.experiment_remark,
+            ep.experiment_contact,
+            ep.contact_phone,
+            ep.contact_email,
+            ep.ethics_audit,
+            ep.experiment_tag,
+            ep.experiment_scene,
+            ep.groups_number,
+            ep.experiment_person_number,
+            ep.experiment_status,
+            ep.intelligent_model,
+            ep.protocol,
+            ep.experiment_attribution,
+            ep.holding_status,
+            ep.creator,
+            ep.create_date,
+            ep.updater,
+            ep.update_date,
+            ep.update_name,
+            su.real_name as create_name,
+            ep.start_time,
+            ep.end_time,
+            ep.publish_time,
+            ep.experiment_style,
+            1 as is_favorite
+        from t_favorite epf
+        inner join t_experiment_plan ep on epf.target_id = ep.id
+        left join sys_user su on ep.creator = su.id and su.is_deleted = 0
+        where epf.is_deleted = 0
+          and ep.is_deleted = 0
+          and epf.user_id = #{userId}
+          and epf.favorite_type = 'EXPERIMENT_PLAN'
+        <if test="name != null and name != ''">
+            and ep.experiment_name like concat('%', #{name}, '%')
+        </if>
+        <if test="experimentField != null and experimentField != ''">
+            and ep.experiment_field like concat('%', #{experimentField}, '%')
+        </if>
+        order by epf.favorite_time desc, epf.id desc
+    </select>
+
+    <select id="pageFavoriteMaterial" resultType="com.nbtech.ailab.biz.dto.MaterialFavoritePageDto">
+        select
+            f.id as favorite_id,
+            f.favorite_time,
+            tm.id,
+            tm.material_type,
+            tm.material_status,
+            tm.material_name,
+            tm.material_data,
+            tm.material_attribution,
+            tm.tag,
+            tm.creator,
+            tm.create_date,
+            tm.updater,
+            tm.update_date,
+            tm.create_name,
+            tm.update_name,
+            tm.url,
+            tm.work_flow,
+            tm.is_review,
+            tm.user_id,
+            tm.role_id,
+            tm.is_delete,
+            tm.experiment_plan_id,
+            1 as is_favorite
+        from t_favorite f
+        inner join t_material tm on f.target_id = tm.id
+        where f.is_deleted = 0
+          and tm.is_delete = 0
+          and f.user_id = #{userId}
+          and f.favorite_type = 'MATERIAL'
+        <if test="materialType != null and materialType != ''">
+            and tm.material_type = #{materialType}
+        </if>
+        <if test="materialName != null and materialName != ''">
+            and tm.material_name like concat('%', #{materialName}, '%')
+        </if>
+        order by f.favorite_time desc, f.id desc
+    </select>
+
+    <select id="pageFavoriteModel" resultType="com.nbtech.ailab.biz.dto.ModelFavoritePageDto">
+        select
+            f.id as favorite_id,
+            f.favorite_time,
+            tm.id,
+            tm.model_name,
+            tm.models,
+            tm.model_image_url,
+            tm.user_image_url,
+            tm.greet_info,
+            tm.prompt,
+            tm.temperature,
+            tm.max_tokens,
+            tm.tag,
+            tm.creator,
+            tm.create_date,
+            tm.updater,
+            tm.update_date,
+            tm.create_name,
+            tm.update_name,
+            tm.way,
+            tm.model_status,
+            tm.work_flow,
+            tm.is_review,
+            tm.attribution,
+            tm.experiment_plan_id,
+            tm.user_id,
+            tm.role_id,
+            tm.is_delete,
+            tm.story_setting,
+            tm.role_setting,
+            tm.talking_topic,
+            tm.start_role,
+            tm.subject_role,
+            tm.model_bot_type,
+            tm.response_prompt,
+            tm.response_text,
+            tm.response_time,
+            tm.question,
+            tm.answer,
+            tm.teacher_avatar,
+            tm.student_avatar,
+            tm.config,
+            1 as is_favorite
+        from t_favorite f
+          inner join t_model tm on f.target_id = tm.id
+        where f.is_deleted = 0
+          and tm.is_delete = 0
+          and f.user_id = #{userId}
+          and f.favorite_type = 'AGENT'
+        <if test="modelName != null and modelName != ''">
+            and tm.model_name like concat('%', #{modelName}, '%')
+        </if>
+        order by f.favorite_time desc, f.id desc
+    </select>
+
+    <select id="pageFavoriteQuestionnaire" resultType="com.nbtech.ailab.biz.dto.QuestionnaireFavoritePageDto">
+        select
+            f.id as favorite_id,
+            f.favorite_time,
+            tq.id,
+            tq.questionnaire_name,
+            tq.questionnaire_data,
+            tq.questionnaire_desc,
+            tq.questionnaire_attribution,
+            tq.experiment_plan_id,
+            tq.need_timer,
+            tq.creator,
+            tq.create_date,
+            tq.updater,
+            tq.update_date,
+            tq.status,
+            tq.create_name,
+            tq.update_name,
+            tq.work_flow,
+            tq.is_review,
+            tq.user_id,
+            tq.role_id,
+            tq.is_deleted,
+            1 as is_favorite
+        from t_favorite f
+        inner join t_questionnaire tq on f.target_id = tq.id
+        where f.is_deleted = 0
+          and tq.is_deleted = 0
+          and f.user_id = #{userId}
+          and f.favorite_type = 'QUESTIONNAIRE'
+        <if test="questionnaireName != null and questionnaireName != ''">
+            and tq.questionnaire_name like concat('%', #{questionnaireName}, '%')
+        </if>
+        order by f.favorite_time desc, f.id desc
+    </select>
+
+</mapper>
+

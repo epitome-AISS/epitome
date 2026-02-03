@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nbtech.ailab.biz.dao.ExperimentProgressDao">
+
+    <resultMap type="com.nbtech.ailab.biz.entity.ExperimentProgressEntity" id="experimentProgressMap">
+        <result property="id" column="id"/>
+        <result property="experimentId" column="experiment_id"/>
+        <result property="groupsId" column="groups_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="creator" column="creator"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updater" column="updater"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="updateName" column="update_name"/>
+        <result property="createName" column="create_name"/>
+    </resultMap>
+
+    <select id="getProgress" resultType="com.nbtech.ailab.biz.dto.ExperimentProgressDto">
+        select
+               user_id,
+               experiment_id,
+               groups_id,
+               element_id,
+               model_name
+        from t_experiment_progress
+        where is_deleted = 0
+              and user_id = #{userId}
+              and experiment_id = #{experimentId}
+              and groups_id = #{groupsId}
+        order by create_date desc
+        limit 1
+    </select>
+
+    <select id="getElementProgress" resultType="com.nbtech.ailab.biz.dto.ExperimentProgressDto">
+        select
+            user_id,
+            experiment_id,
+            groups_id,
+            element_id,
+            model_name
+        from t_experiment_progress
+        where is_deleted = 0
+          and user_id = #{userId}
+          and element_id = #{elementId}
+        order by create_date desc
+            limit 1
+    </select>
+    <select id="getModelNames" resultType="java.lang.String">
+        select model_name
+        from t_experiment_progress
+        where is_deleted =0
+          and set_id = #{setId}
+          and user_id = #{userId}
+          and groups_id = #{groupsId}
+          and experiment_id = #{experimentId}
+          and model_name is not null
+        group by model_name
+    </select>
+
+    <select id="getMaterialGroup" resultType="com.nbtech.ailab.biz.dto.MaterialGroupListDto">
+        select c.username,
+               b.id materialId,
+               b.material_name,
+               a.model_name data
+        from t_experiment_progress a
+                 left join t_material b on a.material_id = b.id and b.is_delete = 0
+                 left join sys_user c on a.user_id = c.id and c.is_deleted = 0
+        where a.is_deleted = 0
+          and a.groups_id = #{groupId}
+          and a.element_id in
+        <foreach collection="elementIds" item="elementId" separator="," open="(" close=")">
+            #{elementId}
+        </foreach>
+        order by a.user_id, a.sequence;
+    </select>
+</mapper>

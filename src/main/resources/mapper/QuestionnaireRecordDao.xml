@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nbtech.ailab.biz.dao.QuestionnaireRecordDao">
+
+    <resultMap type="com.nbtech.ailab.biz.entity.QuestionnaireRecordEntity" id="questionnaireRecordMap">
+        <result property="id" column="id"/>
+        <result property="groupsId" column="groups_id"/>
+        <result property="operatorPrecedence" column="operator_precedence"/>
+        <result property="questionnaireId" column="questionnaire_id"/>
+        <result property="questionName" column="question_name"/>
+        <result property="spentTime" column="spent_time"/>
+        <result property="creator" column="creator"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updater" column="updater"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="updateName" column="update_name"/>
+        <result property="createName" column="create_name"/>
+    </resultMap>
+    <delete id="deleteByGroupsId">
+        delete
+        from t_questionnaire_record
+        where groups_id = #{groupId}
+    </delete>
+    <select id="getRecordData" resultType="com.nbtech.ailab.biz.dto.QuestionnaireInfoDto">
+        SELECT tgs.user_id,
+               tgs.questionnaire_id,
+               tgs.question_sort,
+               tgs.answer AS qaData,
+               tq.questionnaire_name       elementName
+        FROM t_questionnaire_record tgs
+                 LEFT JOIN t_questionnaire tq ON tgs.questionnaire_id = tq.id
+        WHERE tgs.groups_id = #{groupId}
+          AND tgs.questionnaire_id = #{questionnaireId}
+          and tgs.source_type is null
+          and tgs.element_id = #{elementId}
+          and tgs.is_deleted = 0
+          AND tq.is_deleted = 0
+        ORDER BY
+            question_sort
+    </select>
+
+
+
+</mapper>

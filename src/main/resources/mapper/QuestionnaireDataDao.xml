@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nbtech.ailab.biz.dao.QuestionnaireDataDao">
+
+    <resultMap type="com.nbtech.ailab.biz.entity.QuestionnaireDataEntity" id="questionnaireDataMap">
+        <result property="id" column="id"/>
+        <result property="groupsId" column="groups_id"/>
+        <result property="questionnaireId" column="questionnaire_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="qaData" column="qa_data"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="creator" column="creator"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updater" column="updater"/>
+        <result property="updateDate" column="update_date"/>
+    </resultMap>
+
+    <select id="groupQuestionData" resultType="com.nbtech.ailab.biz.entity.QuestionnaireDataEntity">
+        select *
+        from t_questionnaire_data
+        where is_deleted = 0
+          and groups_id = #{groupsId}
+          and questionnaire_id = #{questionnaireId}
+    </select>
+    <select id="getQuestionnaireDataTotal" resultType="com.nbtech.ailab.biz.dto.QuestionnaireDataDto">
+        select *
+        from t_questionnaire_data tq
+        where tq.is_deleted = 0 and tq.groups_id = #{groupsId}
+          and tq.questionnaire_id = #{questionnaireId}
+    </select>
+
+    <select id="getBySort" resultType="com.nbtech.ailab.biz.dto.QuestionDto">
+        SELECT questionSort,
+               questionType,
+               questionName
+        FROM t_questionnaire t,
+             JSON_TABLE(
+                     t.questionnaire_data,
+                     '$[*]' COLUMNS ( questionSort VARCHAR ( 255 ) PATH '$.questionSort', questionType VARCHAR ( 255 ) PATH '$.questionType',
+questionName VARCHAR ( 255 ) PATH '$.questionName')) AS jt
+        WHERE t.is_deleted = 0 and t.id = #{id}
+          AND jt.questionSort = #{answerSort}
+    </select>
+
+
+    <select id="getSingleQuestion" resultType="com.nbtech.ailab.biz.dto.QuestionDto">
+        SELECT questionSort,
+               questionType,
+               questionName
+        FROM t_questionnaire t,
+             JSON_TABLE(
+                     t.questionnaire_data,
+                     '$[*]' COLUMNS ( questionSort VARCHAR ( 255 ) PATH '$.questionSort', questionType VARCHAR ( 255 ) PATH '$.questionType', questionName VARCHAR ( 255 ) PATH '$.questionName' )) AS jt
+        WHERE t.is_deleted and  t.id = #{id}
+          AND jt.questionSort = #{answerSort}
+          AND jt.questionType IN ('SINGLE_OPTION')
+    </select>
+    <select id="getScaleAnswer" resultType="com.nbtech.ailab.biz.dto.AnswerJsonDto">
+        SELECT answerSort,
+               scale
+        FROM t_questionnaire_data tq,
+             JSON_TABLE(
+                     qa_data,
+                     '$[*]' COLUMNS ( answerSort VARCHAR ( 255 ) PATH '$.answerSort', scale JSON PATH '$.scale' )) AS jt
+        WHERE
+            tq.is_deleted = 0 and groups_id = #{groupId}
+          AND questionnaire_id = #{questionnaireId}
+          AND scale IS NOT NULL
+        ORDER BY answerSort
+    </select>
+    <select id="getScaleQuestion" resultType="com.nbtech.ailab.biz.dto.QuestionDto">
+        SELECT questionSort,
+               questionType,
+               questionName
+        FROM t_questionnaire t,
+             JSON_TABLE(
+                     t.questionnaire_data,
+                     '$[*]' COLUMNS ( questionSort VARCHAR ( 255 ) PATH '$.questionSort', questionType VARCHAR ( 255 ) PATH '$.questionType', questionName VARCHAR ( 255 ) PATH '$.questionName' )) AS jt
+        WHERE t.is_deleted = 0 and t.id = #{id}
+          AND jt.questionSort = #{answerSort}
+          AND jt.questionType IN ('MEASUREMENT')
+    </select>
+    <select id="getScaleContexts" resultType="com.nbtech.ailab.biz.dto.AnswerJsonDto">
+        SELECT answerSort,
+               scaleContext,
+               scaleGrade
+        FROM t_questionnaire_data tq,
+             JSON_TABLE(qa_data, '$[*]' COLUMNS ( answerSort VARCHAR ( 255 ) PATH '$.answerSort', scaleContext VARCHAR ( 255 ) PATH '$.scale.scaleContext' ,scaleGrade LONG PATH '$.scale.scaleGrade' )) AS jt
+        WHERE groups_id = #{groupId}
+          AND is_deleted = 0
+          AND questionnaire_id = #{questionnaireId}
+
+          AND answerSort = #{answerSort}
+          AND scaleContext IS NOT NULL
+
+        ORDER BY answerSort,
+                 scaleContext;
+    </select>
+    <select id="getQuestionInfo" resultType="com.nbtech.ailab.biz.dto.QuestionInfoDto">
+        SELECT
+            questionSort,
+            choices,
+            scales
+        FROM
+            t_questionnaire t,
+            JSON_TABLE (
+                    t.questionnaire_data,
+                    '$[*]' COLUMNS ( questionSort VARCHAR ( 255 ) PATH '$.questionSort', choices JSON PATH '$.choices', scales JSON PATH '$.scales' )) AS jt
+        WHERE
+            t.is_deleted = 0 and t.id = #{id}
+          AND jt.questionSort = #{answerSort}
+    </select>
+    <select id="getQuestionnaireIdsByGroupId" resultType="com.nbtech.ailab.biz.dto.QuestionnaireDto">
+        SELECT
+            distinct
+            jt.id
+        FROM t_groups tg,
+             JSON_TABLE(
+                     process_config,
+                     '$[*]' COLUMNS ( id LONG PATH '$.config.questionnaireId',
+                                      elementId varchar(255) PATH '$.id',
+                                      type VARCHAR ( 255 ) PATH '$.type' )) AS jt
+        WHERE tg.is_deleted = 0 and jt.type = 'collection'
+          AND tg.id = #{groupId}
+    </select>
+    <select id="getSortsByQuestionnaireId" resultType="java.lang.Long">
+        SELECT
+            jt.questionSort
+        FROM
+            t_questionnaire tq,
+            JSON_TABLE (
+                    questionnaire_data,
+                    '$[*]' COLUMNS ( questionType VARCHAR ( 255 ) PATH '$.questionType', questionSort VARCHAR ( 255 ) PATH '$.questionSort' )) AS jt
+        WHERE
+            tq.id = #{questionnaireId}
+    </select>
+    <select id="getElementList" resultType="com.nbtech.ailab.biz.dto.QuElementDto">
+        SELECT
+            jt.questionnaireId,
+            jt.id
+        FROM
+            t_groups tg,
+            JSON_TABLE (
+                    process_config,
+                    '$[*]' COLUMNS ( id VARCHAR ( 255 ) PATH '$.id', type VARCHAR ( 255 ) PATH '$.type', questionnaireId LONG PATH '$.config.questionnaireId' )) AS jt
+        WHERE
+            tg.id = #{groupId}
+          AND jt.type = 'collection'
+    </select>
+    <select id="getSingles" resultType="com.nbtech.ailab.biz.dto.QuestionDto">
+        SELECT
+            jt.questionName,
+            jt.questionType,
+            jt.questionSort
+        FROM
+            `t_questionnaire` tq,
+            JSON_TABLE (
+                    questionnaire_data,
+                    '$[*]' COLUMNS ( questionType VARCHAR ( 255 ) PATH '$.questionType', questionSort LONG PATH '$.questionSort', questionName VARCHAR ( 255 ) PATH '$.questionName' )) AS jt
+        WHERE
+            tq.id = #{questionnaireId}
+          AND jt.questionType = 'SINGLE_OPTION'
+    </select>
+    <select id="getByQuestionSort" resultType="com.nbtech.ailab.biz.dto.QuestionInfoDto">
+        SELECT questionSort,
+               questionType,
+               questionName,
+               choices
+        FROM t_questionnaire t,
+             JSON_TABLE(
+                     t.questionnaire_data,
+                     '$[*]' COLUMNS ( questionSort VARCHAR ( 255 ) PATH '$.questionSort', questionType VARCHAR ( 255 ) PATH '$.questionType',
+questionName VARCHAR ( 255 ) PATH '$.questionName' ,choices JSON PATH '$.choices')) AS jt
+        WHERE t.is_deleted = 0 and t.id = #{id}
+          AND jt.questionSort = #{answerSort}
+    </select>
+    <select id="getMultis" resultType="com.nbtech.ailab.biz.dto.QuestionDto">
+        SELECT jt.questionName,
+               jt.questionType,
+               jt.questionSort
+        FROM `t_questionnaire` tq,
+             JSON_TABLE(
+                     questionnaire_data,
+                     '$[*]' COLUMNS ( questionType VARCHAR ( 255 ) PATH '$.questionType', questionSort LONG PATH '$.questionSort', questionName VARCHAR ( 255 ) PATH '$.questionName')) AS jt
+        WHERE tq.id = #{questionnaireId} and tq.is_deleted = 0
+
+          AND jt.questionType = 'MULTI_OPTION'
+    </select>
+    <select id="getWords" resultType="com.nbtech.ailab.biz.dto.QuestionDto">
+        SELECT jt.questionName,
+               jt.questionSort,
+               jt.questionType
+        FROM t_questionnaire tq,
+             JSON_TABLE(
+                     questionnaire_data,
+                     '$[*]' COLUMNS ( questionSort LONG PATH '$.questionSort', questionName VARCHAR ( 255 ) PATH '$.questionName', questionType VARCHAR ( 255 ) PATH '$.questionType' )) AS jt
+        WHERE tq.is_deleted = 0
+          AND tq.id = #{questionnaireId}
+          AND (jt.questionType = 'SHORT_ANSWER' OR jt.questionType = 'FILL')
+    </select>
+    <select id="getSort" resultType="com.nbtech.ailab.biz.dto.QuestionDto">
+        SELECT jt.questionName,
+               jt.questionSort,
+               jt.questionType
+        FROM t_questionnaire tq,
+             JSON_TABLE(
+                     questionnaire_data,
+                     '$[*]' COLUMNS ( questionSort LONG PATH '$.questionSort', questionName VARCHAR ( 255 ) PATH '$.questionName', questionType VARCHAR ( 255 ) PATH '$.questionType' )) AS jt
+        WHERE tq.is_deleted = 0
+          AND tq.id = #{questionnaireId}
+          AND jt.questionType = 'SORT'
+    </select>
+    <select id="getQuestionnaireId" resultType="java.lang.Long">
+        select
+            distinct questionnaire_id
+        from t_questionnaire_data
+        where groups_id = #{groupId}
+          and is_deleted = 0
+    </select>
+
+
+</mapper>

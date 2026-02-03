@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nbtech.ailab.biz.dao.BasicModelDao">
+
+
+    <select id="getUseModelId" resultType="java.lang.Integer">
+        select count(*)
+        from t_model a,
+             JSON_TABLE(models, '$[*]' COLUMNS (id VARCHAR(255) PATH '$.id')
+             ) b
+        where a.is_delete = 0 and b.id = #{id};
+    </select>
+
+    <select id="getOwnerBasicModels" resultType="com.nbtech.ailab.biz.dto.BasicModelDto">
+        select
+            id,
+            name,
+            chinese_name,
+            english_name,
+            chinese_desc,
+            english_desc,
+            available_status,
+            user_id,
+            basic_model_attribution,
+            context_length
+        from t_basic_model
+        where is_deleted = 0
+           and use_status = #{status}
+           and user_id = #{userId}
+           or user_id is null
+        order by update_date desc
+    </select>
+
+    <select id="getUseChatRoomId" resultType="java.lang.Integer">
+        select count(*)
+        from t_chat_room_structure a,
+             JSON_TABLE(roles_set, '$[*]' COLUMNS (models VARCHAR(255) PATH '$.models')
+             ) b
+        where a.is_deleted = 0 and models = #{id};
+    </select>
+</mapper>

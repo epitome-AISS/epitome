@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nbtech.ailab.biz.dao.ExperimentPlanOperationRecordDao">
+
+
+    <select id="getOperation" resultType="com.nbtech.ailab.vo.OperationRecordVo">
+        (select
+             #{audit} operation,
+             operate_explaination explaination,
+             create_date
+         from t_experiment_plan_operation_record
+         where experiment_id = #{planId}
+           and is_deleted = 0
+           and operate_type in (#{audit}, #{failsAudit})
+         order by create_date desc
+             limit 1)
+
+        union all
+
+        (select
+             #{publish} operation,
+             operate_explaination explaination,
+             create_date
+         from t_experiment_plan_operation_record
+         where experiment_id = #{planId}
+           and is_deleted = 0
+           and operate_type = #{publish}
+         order by create_date desc
+             limit 1)
+
+        union all
+
+        (select
+             #{end} operation,
+             operate_explaination explaination,
+             create_date
+         from t_experiment_plan_operation_record
+         where experiment_id = #{planId}
+           and is_deleted = 0
+           and operate_type = #{end}
+         order by create_date desc
+             limit 1)
+
+        union all
+
+        (select
+             #{pause} operation,
+             operate_explaination explaination,
+             create_date
+         from t_experiment_plan_operation_record
+         where experiment_id = #{planId}
+           and is_deleted = 0
+           and operate_type = #{pause}
+         order by create_date desc
+             limit 1)
+    </select>
+</mapper>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nbtech.ailab.biz.dao.MaterialDao">
+
+    <select id="listVo" resultType="com.nbtech.ailab.biz.dto.MaterialDto">
+        SELECT *
+        FROM t_material tm
+        where tm.is_delete =0
+            and experiment_plan_id = #{dto.experimentPlanId}
+            <if test="dto.materialType != null">
+                and tm.material_type = #{dto.materialType}
+            </if>
+            <if test="userName != null and userName.trim() != ''">
+                AND tm.material_attribution = #{userName}
+            </if>
+    </select>
+
+    <select id="pageMaterial" resultType="com.nbtech.ailab.biz.dto.MaterialDto">
+        SELECT 
+            tm.*,
+            ep.experiment_name as experiment_plan_name,
+            ep.experiment_title as experiment_plan_title
+        FROM t_material tm
+        left join t_experiment_plan ep on tm.experiment_plan_id = ep.id and ep.is_deleted = 0
+        where tm.is_delete =0
+            <if test="dto.materialType != null">
+                and tm.material_type = #{dto.materialType}
+            </if>
+            <if test="dto.materialName != null">
+                and tm.material_name like concat('%' ,#{dto.materialName} ,'%')
+            </if>
+            <if test="dto.tag != null">
+                and tm.tag like concat('%' ,#{dto.tag} ,'%')
+            </if>
+            <if test="dto.materialStatus == 'DRAFT' or dto.materialStatus == 'HAVE_OPEN'">
+                and tm.material_status = #{dto.materialStatus}
+            </if>
+            <if test="dto.materialStatus == 'WAIT_REVIEW'">
+                and (tm.material_status = #{dto.materialStatus} or (#{roleId} = 1 and tm.material_status = #{dto.materialStatus}))
+            </if>
+            <if test="dto.materialStatus == 'OPEN'">
+                and tm.material_status = 'OPEN'
+            </if>
+            <if test="roleId == 2">
+                and tm.material_attribution = #{userName}
+            </if>
+        ORDER BY tm.update_date DESC
+    </select>
+    <select id="pageAudit" resultType="com.nbtech.ailab.biz.dto.MaterialDto">
+        SELECT *
+        FROM t_material tm
+        where tm.is_delete =0
+            <if test="dto.materialName != null">
+                and tm.material_name like concat('%' ,#{dto.materialName} ,'%')
+            </if>
+            <if test="dto.materialType != null">
+                and tm.material_type = #{dto.materialType}
+            </if>
+            <if test="dto.materialStatus == 'WAIT_REVIEW'">
+                and tm.material_status = #{dto.materialStatus}
+            </if>
+            <if test="dto.materialStatus == null">
+                and (tm.material_status = 'WAIT_REVIEW' or tm.material_status = 'OPEN')
+            </if>
+            <if test="dto.materialStatus == 'OPEN'">
+                and tm.material_status = 'OPEN'
+            </if>
+    </select>
+    <select id="getOpenList" resultType="com.nbtech.ailab.biz.dto.MaterialDto">
+        select * from t_material where material_status = 'OPEN'
+    </select>
+    <select id="getMaterialTags" resultType="java.lang.String">
+        select
+            distinct tag
+        from t_material
+        where is_delete = 0
+          and material_type = #{materialType}
+          and tag is not null
+    </select>
+    <select id="getPublicMaterialNumber" resultType="java.lang.Integer">
+        select count(id)
+        from t_material
+        where is_delete = 0
+            and material_status = 'OPEN'
+            and material_type in
+        <foreach collection="materialTypeList" item="materialType" close=")" open="(" separator=",">
+            #{materialType}
+        </foreach>
+    </select>
+
+    <select id="pagePublic" resultType="com.nbtech.ailab.biz.dto.MaterialDto">
+        SELECT *
+        FROM t_material tm
+        where tm.is_delete = 0
+          and tm.material_status = 'OPEN'
+        <if test="dto.materialAttribution != null and dto.materialAttribution != ''">
+            and tm.material_attribution = #{dto.materialAttribution}
+        </if>
+        <if test="dto.materialType != null and dto.materialType != ''">
+            and tm.material_type = #{dto.materialType}
+        </if>
+        <if test="dto.materialName != null and dto.materialName != ''">
+            and tm.material_name like concat('%', #{dto.materialName}, '%')
+        </if>
+        ORDER BY tm.update_date DESC
+    </select>
+
+    <select id="pagePublicWithFavorite" resultType="com.nbtech.ailab.biz.dto.MaterialDto">
+        select
+            tm.*,
+            ep.experiment_name as experiment_plan_name,
+            ep.experiment_title as experiment_plan_title,
+            case when f.id is not null then 1 else 0 end as is_favorite
+        from t_material tm
+        left join t_experiment_plan ep on tm.experiment_plan_id = ep.id and ep.is_deleted = 0
+        left join t_favorite f on tm.id = f.target_id
+            and f.favorite_type = 'MATERIAL'
+            and f.user_id = #{userId}
+            and f.is_deleted = 0
+        where tm.is_delete = 0
+          and tm.material_status = 'OPEN'
+        <if test="dto.materialAttribution != null and dto.materialAttribution != ''">
+            and tm.material_attribution = #{dto.materialAttribution}
+        </if>
+        <if test="dto.materialType != null and dto.materialType != ''">
+            and tm.material_type = #{dto.materialType}
+        </if>
+        <if test="dto.materialName != null and dto.materialName != ''">
+            and tm.material_name like concat('%', #{dto.materialName}, '%')
+        </if>
+        ORDER BY tm.update_date DESC
+    </select>
+
+    <select id="selectById" resultType="com.nbtech.ailab.biz.entity.MaterialEntity">
+        SELECT *
+        FROM t_material
+        WHERE id = #{id}
+    </select>
+
+    <select id="listAll" resultType="com.nbtech.ailab.biz.dto.MaterialDto">
+        SELECT *
+        FROM t_material
+        <where>
+            <if test="dto.tag != null and dto.tag != ''">
+                and tag like concat('%', #{dto.tag}, '%')
+            </if>
+        </where>
+        ORDER BY update_date DESC
+    </select>
+
+</mapper>

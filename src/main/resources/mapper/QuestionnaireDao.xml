@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nbtech.ailab.biz.dao.QuestionnaireDao">
+
+    <resultMap type="com.nbtech.ailab.biz.entity.QuestionnaireEntity" id="questionnaireMap">
+        <result property="id" column="id"/>
+        <result property="questionnaireName" column="questionnaire_name"/>
+        <result property="questionnaireData" column="questionnaire_data"/>
+        <result property="questionnaireDesc" column="questionnaire_desc"/>
+        <result property="questionnaireAttribution" column="questionnaire_attribution"/>
+        <result property="creator" column="creator"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updater" column="updater"/>
+        <result property="updateDate" column="update_date"/>
+    </resultMap>
+
+    <select id="pageQuestionnaire" resultType="com.nbtech.ailab.biz.dto.QuestionnairePageDto">
+        select 
+            tq.*,
+            ep.experiment_name as experiment_plan_name,
+            ep.experiment_title as experiment_plan_title,
+            CASE 
+                WHEN ep.experiment_status = 'beEnd' THEN 'beEnd'
+                WHEN ep.experiment_status = 'end' THEN 'end'
+                ELSE NULL
+            END as experiment_status
+        from t_questionnaire tq
+        left join t_experiment_plan ep on tq.experiment_plan_id = ep.id and ep.is_deleted = 0
+        where tq.is_deleted =0
+            <if test="dto.questionnaireName != null">
+                and tq.questionnaire_name like concat('%', #{dto.questionnaireName} ,'%')
+            </if>
+            <if test="dto.status == null ">
+                and (tq.questionnaire_attribution = #{userName} OR tq.status = 'OPEN')
+            </if>
+            <if test="dto.status == 'DRAFT' or dto.status == 'HAVE_OPEN'">
+                and (tq.status = #{dto.status} and tq.questionnaire_attribution = #{userName})
+            </if>
+            <if test="dto.status == 'WAIT_REVIEW'">
+                and ((tq.status = #{dto.status} and tq.questionnaire_attribution = #{userName}) or (#{roleId} = 1 and tq.status = #{dto.status}))
+            </if>
+            <if test="dto.status == 'OPEN' ">
+                and (tq.status = #{dto.status})
+            </if>
+            <if test="roleId == 2">
+                and tq.questionnaire_attribution = #{userName}
+            </if>
+        ORDER BY tq.update_date DESC
+    </select>
+    <select id="listVo" resultType="com.nbtech.ailab.biz.dto.QuestionnaireDto">
+        select *
+        from t_questionnaire tq
+        where tq.is_deleted = 0
+            and tq.experiment_plan_id = #{dto.experimentPlanId}
+            <if test="userName != null and userName.trim() != ''">
+                and tq.questionnaire_attribution = #{userName}
+            </if>
+    </select>
+    <select id="pageAudit" resultType="com.nbtech.ailab.biz.dto.QuestionnairePageDto">
+        select tq.*
+        from t_questionnaire tq
+        where tq.is_deleted = 0
+            <if test="dto.questionnaireName != null">
+                and tq.questionnaire_name like concat('%', #{dto.questionnaireName} ,'%')
+            </if>
+            <if test="dto.status == null ">
+                and (tq.status = 'WAIT_REVIEW' OR tq.status = 'OPEN')
+            </if>
+            <if test="dto.status == 'WAIT_REVIEW'">
+                and tq.status = #{dto.status}
+            </if>
+            <if test="dto.status == 'OPEN' ">
+                and (tq.status = #{dto.status})
+            </if>
+        ORDER BY tq.update_date DESC
+    </select>
+    <select id="getSingleChoicesAnswers" resultType="com.nbtech.ailab.biz.dto.WordQuestionnaireDto">
+        SELECT
+            jt.choiceSort AS optionSort,
+            jt.choiceContext AS optionName
+        FROM
+            t_questionnaire_data tqa,
+            JSON_TABLE (
+                    qa_data,
+                    '$[*]' COLUMNS ( answerSort LONG PATH '$.answerSort', choiceSort LONG PATH '$.choices[*].choiceSort', choiceContext VARCHAR ( 255 ) PATH '$.choices[*].choiceContext' )) AS jt
+        WHERE tqa.is_deleted = 0
+          and tqa.groups_id = #{groupsId}
+          AND tqa.questionnaire_id = #{questionnaireId}
+          AND jt.answerSort = #{questionSort}
+          AND jt.choiceContext IS NOT NULL
+        ORDER BY jt.answerSort
+    </select>
+    <select id="getMultiChoicesAnswers" resultType="java.lang.String">
+        SELECT jt.choices choicesArray
+        FROM t_questionnaire_data tqa,
+             JSON_TABLE(
+                     qa_data,
+                     '$[*]' COLUMNS ( answerSort LONG PATH '$.answerSort', choices JSON PATH '$.choices' )) AS jt
+        WHERE tqa.groups_id = #{groupsId}
+          and tqa.is_deleted = 0
+          AND tqa.questionnaire_id = #{questionnaireId}
+          AND jt.answerSort = #{questionSort}
+          AND jt.choices IS NOT NULL
+    </select>
+    <select id="getWordContextAnswers" resultType="java.lang.String">
+        SELECT jt.answerContext
+        FROM t_questionnaire_data tqa,
+             JSON_TABLE(
+                     qa_data,
+                     '$[*]' COLUMNS ( answerSort LONG PATH '$.answerSort', answerContext TEXT PATH '$.answerContext' )) AS jt
+        WHERE tqa.is_deleted = 0
+          and tqa.groups_id = #{groupsId}
+          AND tqa.questionnaire_id = #{questionnaireId}
+          AND jt.answerSort = #{questionSort}
+          AND jt.answerContext IS NOT NULL
+    </select>
+
+    <select id="getTextUsefully" resultType="java.lang.Integer">
+        select count(*)
+        from t_questionnaire_record
+        where is_deleted = 0
+          and groups_id = #{groupsId}
+          and question_sort = #{questionSort}
+          and questionnaire_id = #{questionnaireId}
+    </select>
+
+    <select id="getAnswerList" resultType="com.nbtech.ailab.biz.dto.WordTypeDto">
+        select answer wordName,
+               count(id) wordNum
+        from t_questionnaire_record
+        where is_deleted = 0
+          and groups_id = #{groupsId}
+          and question_sort = #{questionSort}
+          and questionnaire_id = #{questionnaireId}
+        group by answer
+        order by answer
+    </select>
+    <select id="getQuestionnaireNumber" resultType="java.lang.Integer">
+        select count(id)
+        from t_questionnaire
+        where is_deleted = 0
+          and status = 'OPEN'
+    </select>
+
+    <select id="pagePublicWithFavorite" resultType="com.nbtech.ailab.biz.dto.QuestionnaireDto">
+        select
+            tq.*,
+            ep.experiment_name as experiment_plan_name,
+            ep.experiment_title as experiment_plan_title,
+            case when f.id is not null then 1 else 0 end as is_favorite
+        from t_questionnaire tq
+        left join t_experiment_plan ep on tq.experiment_plan_id = ep.id and ep.is_deleted = 0
+        left join t_favorite f on tq.id = f.target_id
+            and f.favorite_type = 'QUESTIONNAIRE'
+            and f.user_id = #{userId}
+            and f.is_deleted = 0
+        where tq.is_deleted = 0
+          and tq.status = 'OPEN'
+        <if test="questionnaireAttribution != null and questionnaireAttribution != ''">
+            and tq.questionnaire_attribution = #{questionnaireAttribution}
+        </if>
+        order by tq.update_date desc
+    </select>
+
+    <select id="getQuestionnaireById" resultType="com.nbtech.ailab.biz.entity.QuestionnaireEntity">
+        select *
+        from t_questionnaire
+        where id = #{id}
+    </select>
+
+    <select id="listAll" resultType="com.nbtech.ailab.biz.dto.QuestionnaireDto">
+        SELECT *
+        FROM t_questionnaire
+        ORDER BY update_date DESC
+    </select>
+</mapper>

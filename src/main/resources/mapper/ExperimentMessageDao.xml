@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nbtech.ailab.biz.dao.ExperimentMessageDao">
+
+    <resultMap type="com.nbtech.ailab.biz.entity.ExperimentMessageEntity" id="experimentMessageMap">
+        <result property="id" column="id"/>
+        <result property="groupId" column="group_id"/>
+        <result property="processingNumber" column="processing_number"/>
+        <result property="finishedNumber" column="finished_number"/>
+        <result property="sumNumber" column="sum_number"/>
+    </resultMap>
+
+
+</mapper>

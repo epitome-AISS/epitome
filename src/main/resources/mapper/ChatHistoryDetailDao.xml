@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nbtech.ailab.biz.dao.ChatHistoryDetailDao">
+
+    <resultMap type="com.nbtech.ailab.biz.entity.ChatHistoryDetailEntity" id="chatHistoryDetailMap">
+        <result property="id" column="id"/>
+        <result property="chatHistoryId" column="chat_history_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="roleType" column="role_type"/>
+        <result property="record" column="record"/>
+        <result property="recordTime" column="record_time"/>
+        <result property="wordNumber" column="word_number"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="creator" column="creator"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updater" column="updater"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="createName" column="create_name"/>
+        <result property="updateName" column="update_name"/>
+    </resultMap>
+
+    <select id="getChatHistory" resultType="com.nbtech.ailab.biz.dto.ChatHistoryDetailDto">
+        select
+            b.id,
+            b.user_id,
+            b.role_type,
+            b.role_name,
+            b.record,
+            b.record_time,
+            b.avatar,
+            b.enter_time,
+            a.round,
+            a.process_id
+        from t_chat_history a
+                 join t_chat_history_detail b on a.id = b.chat_history_id and b.is_deleted = 0
+        where a.is_deleted = 0
+          and a.element_id = #{elementId}
+            <if test="processId != null and processId !=''">
+                and a.process_id = #{processId}
+            </if>
+            <if test="round != null and round != ''">
+                and a.round = #{round}
+            </if>
+        order by b.create_date,b.id
+    </select>
+    <select id="getLastTalkTime" resultType="java.time.LocalDateTime">
+        select
+           b.create_date
+        from t_chat_history a
+            join t_chat_history_detail b on a.id = b.chat_history_id and b.is_deleted = 0
+        where a.is_deleted = 0 and a.element_id = #{elementId}
+        order by b.create_date desc
+        limit 1
+
+    </select>
+    <select id="getRoomChatRecord" resultType="com.nbtech.ailab.vo.RoomChatHistoryExcelVo">
+        select  ROW_NUMBER() OVER (ORDER BY b.create_date) sort,
+               c.id,
+               a.element_id,
+               b.user_id,
+               b.role_name,
+               b.role_type,
+               b.record_time,
+               b.record
+        from t_chat_history a
+                 join t_chat_history_detail b on a.id = b.chat_history_id and b.is_deleted = 0
+        where a.is_deleted = 0 and a.element_id = #{elementId}
+        order by b.create_date
+    </select>
+
+    <select id="getLastRoomChange" resultType="java.time.LocalDateTime">
+        select
+            a.update_date
+        from t_chat_room a
+        where a.is_deleted = 0
+          and a.element_id = #{elementId}
+    </select>
+    <select id="getChatRoleSpeakCount" resultType="com.nbtech.ailab.vo.ChatRoleSpeakCountVo">
+        select count(b.id) speakerCount,
+               b.role_type name
+        from t_chat_history a
+                 join t_chat_history_detail b on a.id = b.chat_history_id and b.is_deleted = 0
+        where a.element_id = #{elementId}
+          and a.is_deleted = 0
+        group by b.role_type
+        order by role_type
+    </select>
+    <select id="getChatModelSpeakCount" resultType="com.nbtech.ailab.vo.ChatRoleSpeakCountVo">
+        select count(b.id) speakerCount,
+               b.role_name name
+        from t_chat_history a
+                 join t_chat_history_detail b on a.id = b.chat_history_id and b.is_deleted = 0
+        where a.element_id = #{elementId} and b.role_type = #{roleType}
+          and a.is_deleted = 0
+        group by b.role_name
+        order by count(b.id) desc
+    </select>
+    <select id="getRoleSpeakCount" resultType="com.nbtech.ailab.vo.RoleSpeakCountVo">
+        select count(b.id) speakerCount,
+               sum(b.word_number) wordCount,
+               b.role_name,
+               b.user_id,
+               b.role_type
+        from t_chat_history a
+                 join t_chat_history_detail b on a.id = b.chat_history_id and b.is_deleted = 0
+        where a.element_id = #{elementId}
+        and a.is_deleted = 0
+        group by b.role_name, b.role_type, b.user_id
+        order by count(b.id),sum(b.word_number) desc
+        limit 10
+    </select>
+
+    <select id="getFiveMineHistoryDetail" resultType="com.nbtech.ailab.biz.dto.ChatHistoryDetailDto">
+        select a.chat_room_id,
+               b.id,
+               b.role_name,
+               b.record
+        from t_chat_history a
+                 left join t_chat_history_detail b on a.id = b.chat_history_id and b.is_deleted = 0
+        where a.element_id = #{elementId}
+          and b.consumption_status = false
+          and a.is_deleted = 0
+          and b.role_type != #{roleType}
+          and a.create_date between #{fiveMinutesAgo} and #{nowTime}
+    </select>
+
+    <select id="getAvgSpeakNum" resultType="com.nbtech.ailab.vo.RoleSpeakCountVo">
+        select avg(b.word_number) wordCount,
+               b.role_name,
+               b.user_id,
+               b.role_type
+        from t_chat_history a
+                 join t_chat_history_detail b on a.id = b.chat_history_id and b.is_deleted = 0
+        where a.element_id = #{elementId}
+          and a.is_deleted = 0
+         and b.role_type is not null
+        group by b.role_name, b.role_type, b.user_id
+        order by avg(b.word_number) desc
+            limit 10
+    </select>
+
+    <select id="getElementWordNumberSum" resultType="com.nbtech.ailab.vo.ElementWordNumberVo">
+        SELECT 
+            a.element_id as elementId,
+            SUM(b.word_number) as wordNumber
+        FROM t_chat_history_detail b
+        JOIN t_chat_history a ON b.chat_history_id = a.id AND a.is_deleted = 0
+        WHERE b.word_number IS NOT NULL 
+          AND b.role_type = 'MODEL' 
+          AND b.is_deleted = 0
+        GROUP BY a.element_id
+    </select>
+</mapper>

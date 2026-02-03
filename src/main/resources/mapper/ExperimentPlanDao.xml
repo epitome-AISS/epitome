@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nbtech.ailab.biz.dao.ExperimentPlanDao">
+
+
+    <select id="getOldCode" resultType="java.lang.String">
+        select
+            ifnull(experiment_code,0)
+        from t_experiment_plan
+        order by id desc
+            limit 1;
+    </select>
+    <select id="getPlanStatus" resultType="com.nbtech.ailab.vo.PlanStatusVo">
+        select sum(case experiment_status when #{beSubmit} then 1 else 0 end)  beSubmitNum,
+               sum(case experiment_status when #{beAudit} then 1 else 0 end)   beAuditNum,
+               sum(case experiment_status when #{bePublish} then 1 else 0 end) bePublishNum,
+               sum(case experiment_status when #{beEnd} then 1 else 0 end)     beEndNum,
+               sum(case experiment_status when #{end} then 1 else 0 end)       endNum
+        from t_experiment_plan
+        WHERE is_deleted = 0
+    </select>
+
+    <select id="getHomeRecord" resultType="com.nbtech.ailab.vo.HomeRecordVo">
+        with experiment as (select count(*) experimentNumber
+                            from t_experiment_plan
+                            where is_deleted = 0 and experiment_status in (#{beEnd}, #{experimentEnd})),
+             person as (select count(*) personNumber
+                        from t_groups_person
+                        where is_deleted = 0 and experiment_status = #{groupEnd}),
+             researcher as (select count(*) researcherNumber
+                            from sys_user_role
+                            where is_deleted = 0 and role_id != 3)
+        select experimentNumber,
+               personNumber,
+               researcherNumber
+        from experiment,
+             person,
+             researcher
+    </select>
+
+    <select id="getSourceStatus" resultType="java.lang.String">
+        select
+            b.experiment_status
+        from t_groups a
+                 left join t_experiment_plan b on a.experiment_id = b.id
+        where a.is_deleted = 0
+          and b.is_deleted = 0
+          and a.id = #{groupId}
+    </select>
+    <select id="getProcessingPlanIds" resultType="java.lang.Long">
+        SELECT id FROM t_experiment_plan WHERE experiment_status ='beEnd' OR experiment_status ='end'
+    </select>
+
+    <select id="getStudentNumber" resultType="java.lang.Integer">
+        select count(distinct a.id)
+        from t_groups_person a
+                 join t_experiment_plan b on a.experiment_id = b.id and b.is_deleted = 0
+        where a.is_deleted = 0
+    </select>
+    <select id="getPublicClassNumber" resultType="java.lang.Integer">
+        select count(id)
+        from t_experiment_plan
+        where is_deleted = 0
+    </select>
+
+    <select id="pagePublicWithFavorite" resultType="com.nbtech.ailab.biz.dto.ExperimentPlanDto">
+        select
+            ep.id,
+            ep.experiment_code,
+            ep.experiment_name,
+            ep.experiment_title,
+            ep.experiment_field,
+            ep.research_hypothesis,
+            ep.experiment_desc,
+            ep.experiment_remark,
+            ep.experiment_contact,
+            ep.contact_phone,
+            ep.contact_email,
+            ep.ethics_audit,
+            ep.experiment_tag,
+            ep.experiment_scene,
+            ep.groups_number,
+            ep.experiment_person_number,
+            ep.experiment_status,
+            ep.intelligent_model,
+            ep.protocol,
+            ep.experiment_attribution,
+            ep.holding_status,
+            ep.creator,
+            ep.create_date,
+            ep.updater,
+            ep.update_date,
+            ep.update_name,
+            su.real_name as create_name,
+            ep.start_time,
+            ep.end_time,
+            ep.publish_time,
+            ep.is_deleted,
+            ep.experiment_style,
+            case when epf.id is not null then 1 else 0 end as is_favorite
+        from t_experiment_plan ep
+        left join sys_user su on ep.creator = su.id and su.is_deleted = 0
+        left join t_favorite epf on ep.id = epf.target_id
+            and epf.favorite_type = 'EXPERIMENT_PLAN'
+            and epf.user_id = #{userId}
+            and epf.is_deleted = 0
+        where ep.is_deleted = 0
+          and ep.holding_status = 'PUBLIC'
+        <if test="dto.experimentStatus != null and dto.experimentStatus != ''">
+            and ep.experiment_status = #{dto.experimentStatus}
+        </if>
+        <if test="dto.experimentCode != null and dto.experimentCode != ''">
+            and ep.experiment_code like concat('%', #{dto.experimentCode}, '%')
+        </if>
+        <if test="dto.experimentScene != null and dto.experimentScene != ''">
+            and ep.experiment_scene like concat('%', #{dto.experimentScene}, '%')
+        </if>
+        <if test="dto.experimentContact != null and dto.experimentContact != ''">
+            and ep.experiment_contact like concat('%', #{dto.experimentContact}, '%')
+        </if>
+        <if test="dto.experimentName != null and dto.experimentName != ''">
+            and ep.experiment_name like concat('%', #{dto.experimentName}, '%')
+        </if>
+        <if test="dto.experimentField != null and dto.experimentField != ''">
+            and ep.experiment_field like concat('%', #{dto.experimentField}, '%')
+        </if>
+        <if test="dto.experimentAttribution != null and dto.experimentAttribution != ''">
+            and ep.experiment_attribution = #{dto.experimentAttribution}
+        </if>
+        <if test="dto.publishTimeStart != null">
+            and ep.publish_time &gt;= #{dto.publishTimeStart}
+        </if>
+        <if test="dto.publishTimeEnd != null">
+            and ep.publish_time &lt;= #{dto.publishTimeEnd}
+        </if>
+        order by ep.update_date desc, ep.id desc
+    </select>
+</mapper>

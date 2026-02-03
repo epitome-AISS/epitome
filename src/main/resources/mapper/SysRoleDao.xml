@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nbtech.ailab.biz.dao.SysRoleDao">
+
+    <select id="getRoleByUserId" resultType="com.nbtech.ailab.biz.entity.SysRoleEntity">
+        select b.id,
+               b.tag
+        from sys_user_role a
+                 left join sys_role b on a.role_id = b.id and b.is_deleted = 0
+        where a.is_deleted = 0 and a.user_id = #{userId}
+    </select>
+    <select id="getRoleList" resultType="com.nbtech.ailab.vo.SysRoleVo">
+        select
+            id,
+            name,
+            english_name
+        from sys_role
+        where is_deleted = 0
+          and id != 3
+            <if test="roleName">
+               and name like concat ('%', #{roleName}, '%')
+            </if>
+    </select>
+    <select id="getRole" resultType="com.nbtech.ailab.biz.entity.SysRoleEntity">
+        select  b.id,
+                b.name
+        from sys_user_role a
+                 left join sys_role b on a.role_id = b.id and b.is_deleted = 0
+        where a.is_deleted = 0 and a.user_id = #{userId}
+    </select>
+
+
+</mapper>

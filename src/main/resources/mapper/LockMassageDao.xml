@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nbtech.ailab.biz.dao.LockMassageDao">
+
+    <resultMap type="com.nbtech.ailab.biz.entity.LockMassageEntity" id="lockMassageMap">
+        <result property="id" column="id"/>
+        <result property="groupId" column="group_id"/>
+        <result property="elementId" column="element_id"/>
+        <result property="processId" column="process_id"/>
+        <result property="roomId" column="room_id"/>
+        <result property="round" column="round"/>
+        <result property="userId" column="user_id"/>
+        <result property="roleName" column="role_name"/>
+        <result property="workId" column="work_id"/>
+        <result property="status" column="status"/>
+        <result property="creator" column="creator"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updater" column="updater"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="updateName" column="update_name"/>
+        <result property="createName" column="create_name"/>
+    </resultMap>
+    <update id="unlockByWork">
+        update
+            t_lock_massage
+        set status = true
+        where is_deleted = 0
+          and group_id = #{lockMassageDto.groupId}
+          and element_id = #{lockMassageDto.elementId}
+          and process_id = #{lockMassageDto.processId}
+          and room_id = #{lockMassageDto.roomId}
+          and round = #{lockMassageDto.round}
+          and is_preview = #{previewStatus}
+          and user_id = #{lockMassageDto.userId}
+          and lock_reason = #{workId}
+    </update>
+
+    <select id="getNewLockMassage" resultType="com.nbtech.ailab.biz.entity.LockMassageEntity">
+        select *
+        from t_lock_massage
+        where is_deleted = 0
+          and group_id = #{lockMassageDto.groupId}
+          and element_id = #{lockMassageDto.elementId}
+          and process_id = #{lockMassageDto.processId}
+          and room_id = #{lockMassageDto.roomId}
+          and round = #{lockMassageDto.round}
+          and role_name = #{lockMassageDto.roleName}
+          and work_id = #{lockMassageDto.workId}
+          and is_preview = #{previewStatus}
+        order by create_date desc
+    </select>
+
+    <select id="getLockMassagesByWorkId" resultType="com.nbtech.ailab.biz.entity.LockMassageEntity">
+        select
+            element_id,
+            group_id,
+            round,
+            role_name
+        from t_lock_massage
+        where lock_reason = #{lockReason}
+          and is_deleted = 0
+          and status = 0
+          and is_preview = #{previewStatus}
+        group by element_id,
+                 group_id,
+                 round,
+                 role_name,
+                 process_id,
+                 work_id
+    </select>
+
+
+</mapper>

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nbtech.ailab.biz.dao.ModelDao">
+
+
+    <select id="pageModel" resultType="com.nbtech.ailab.biz.dto.ModelDto">
+        SELECT 
+            tm.*,
+            ep.experiment_name as experiment_plan_name,
+            ep.experiment_title as experiment_plan_title
+        FROM t_model tm
+        left join t_experiment_plan ep on tm.experiment_plan_id = ep.id and ep.is_deleted = 0
+        where tm.is_delete =0
+            <if test="dto.modelName != null">
+                and tm.model_name like concat('%', #{dto.modelName} ,'%')
+            </if>
+            <if test="dto.tag != null">
+                and tm.tag like concat('%', #{dto.tag} ,'%')
+            </if>
+            <if test="dto.modelStatus == null">
+                and (tm.attribution = #{userName} or tm.model_status = 'OPEN')
+            </if>
+            <if test="dto.modelStatus == 'DRAFT' or dto.modelStatus == 'HAVE_OPEN'">
+                and (tm.attribution = #{userName} and tm.model_status = #{dto.modelStatus})
+            </if>
+            <if test="dto.modelStatus == 'WAIT_REVIEW'">
+                and ((tm.attribution = #{userName} and tm.model_status = #{dto.modelStatus}) or (#{roleId} = 1 and tm.model_status = #{dto.modelStatus}))
+            </if>
+            <if test="dto.modelStatus == 'OPEN'">
+                and tm.model_status = 'OPEN'
+            </if>
+            <if test="dto.modelBotType != null">
+                and tm.model_bot_type = #{dto.modelBotType}
+            </if>
+            <if test="roleId == 2">
+                and tm.attribution = #{userName}
+            </if>
+        ORDER BY tm.update_date DESC
+    </select>
+    <select id="pageAudit" resultType="com.nbtech.ailab.biz.dto.ModelDto">
+        SELECT *
+        FROM t_model tm
+        where tm.is_delete =0
+            <if test="dto.modelName != null">
+                and tm.model_name like concat('%', #{dto.modelName} ,'%')
+            </if>
+            <if test="dto.modelStatus == null">
+                and (tm.model_status = 'WAIT_REVIEW' or tm.model_status = 'OPEN')
+            </if>
+            <if test="dto.modelStatus == 'WAIT_REVIEW'">
+                and tm.model_status = #{dto.modelStatus}
+            </if>
+            <if test="dto.modelStatus == 'OPEN'">
+                and tm.model_status = 'OPEN'
+            </if>
+            <if test="dto.modelBotType != null">
+                and tm.model_bot_type = #{dto.modelBotType}
+            </if>
+        ORDER BY tm.update_date DESC
+    </select>
+    <select id="getOpenList" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM t_model tm
+        where tm.is_delete =0 and tm.model_status = 'OPEN'
+    </select>
+    <select id="liseModels" resultType="com.nbtech.ailab.biz.dto.ModelDto">
+        SELECT *
+        FROM t_model tm
+        where tm.is_delete = 0
+          <if test="modelBotType !=null">
+              and tm.model_bot_type = #{modelBotType}
+          </if>
+        ORDER BY tm.update_date DESC
+    </select>
+
+    <select id="getModelTags" resultType="java.lang.String">
+        select
+            distinct tag
+        from t_model
+        where is_delete = 0 and tag is not null
+    </select>
+    <select id="getModelCount" resultType="java.lang.Integer">
+        select count(id)
+        from t_model
+        where is_delete = 0
+          and model_status = 'OPEN'
+          and model_bot_type in
+        <foreach collection="modelBotTypeList" item="modelBotType" open="(" close=")" separator=",">
+            #{modelBotType}
+        </foreach>
+    </select>
+
+    <select id="pagePublicWithFavorite" resultType="com.nbtech.ailab.biz.dto.ModelDto">
+        select
+            tm.*,
+            ep.experiment_name as experiment_plan_name,
+            ep.experiment_title as experiment_plan_title,
+            case when f.id is not null then 1 else 0 end as is_favorite
+        from t_model tm
+        left join t_experiment_plan ep on tm.experiment_plan_id = ep.id and ep.is_deleted = 0
+        left join t_favorite f on tm.id = f.target_id
+            and f.favorite_type = 'AGENT'
+            and f.user_id = #{userId}
+            and f.is_deleted = 0
+        where tm.is_delete = 0
+          and tm.model_status = 'OPEN'
+        <if test="attribution != null and attribution != ''">
+            and tm.attribution = #{attribution}
+        </if>
+        order by tm.update_date desc
+    </select>
+
+    <select id="getModelById" resultType="com.nbtech.ailab.biz.entity.ModelEntity">
+        select *
+        from t_model
+        where id = #{id}
+    </select>
+
+    <select id="listAll" resultType="com.nbtech.ailab.biz.dto.ModelDto">
+        SELECT *
+        FROM t_model
+        <where>
+            <if test="dto.tag != null and dto.tag != ''">
+                and tag like concat('%', #{dto.tag}, '%')
+            </if>
+        </where>
+        ORDER BY update_date DESC
+    </select>
+
+</mapper>
