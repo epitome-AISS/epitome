@@ -1,4 +1,4 @@
-# Ai Lab
+# Epitome
 
 Backend service for the experiment management platform, providing experiment plans, groups, questionnaires, model dialogue, data collection, export, and related capabilities.
 
@@ -30,8 +30,6 @@ Backend service for the experiment management platform, providing experiment pla
 
 ```bash
 # Enter project directory after cloning
-cd ailab
-
 # Install dependencies and package (including local lib)
 mvn clean install -DskipTests
 ```
@@ -98,3 +96,4 @@ src/main/java/com/nbtech/ailab/
 
 - **Local dependency**: `lib/common-0.0.1-release.jar` must exist and be installed or referenced via `system` scope.  
 - **Deployment**: A `Dockerfile` is provided for building and deploying the image.  
+- **Sample experiment data**： data/experiment_data

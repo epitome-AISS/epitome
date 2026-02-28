@@ -1,4 +1,4 @@
-# Ai Lab
+# Epitome
 
 实验管理平台后端服务，提供实验计划、实验组、问卷、模型对话、数据采集与导出等能力。
 
@@ -30,8 +30,6 @@
 
 ```bash
 # 克隆项目后进入目录
-cd ailab
-
 # 安装依赖并打包（含本地 lib 依赖）
 mvn clean install -DskipTests
 ```
@@ -98,3 +96,4 @@ src/main/java/com/nbtech/ailab/
 
 - 本地依赖：`lib/common-0.0.1-release.jar`，需存在且已安装或通过 `system` 作用域引入。  
 - 部署：项目内提供 `Dockerfile`，可按需构建镜像部署。  
+- 实验数据示例： data/experiment_data
