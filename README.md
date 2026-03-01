@@ -205,6 +205,8 @@ Access Knife4j documentation to verify the service is running (adjust context-pa
 
 - 📚 **API Documentation Example**: `http://localhost:8085/doc.html`
 
+**Installation Time**: If all dependent software and the environment need to be installed, the typical installation time is approximately 10 hours.
+
 ---
 
 ## 📁 Project Structure
